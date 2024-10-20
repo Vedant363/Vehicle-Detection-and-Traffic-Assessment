@@ -6,3 +6,4 @@ shapely
 openpyxl
 pytube
 yt_dlp
+gunicorn
