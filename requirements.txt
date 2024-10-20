@@ -1,0 +1,8 @@
+Flask
+opencv-python
+numpy
+ultralytics
+shapely
+openpyxl
+pytube
+yt_dlp
