@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Detection and Traffic Assessment</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}"> 
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+        }
+        
+        .maincontainer{
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .dark .maincontainer{
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #000000;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .light .maincontainer{
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        .head{
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(20deg, #0037ff, #00f7ff, #8400ff);
+            padding: 20px;
+            text-align: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+        }
+
+        .dark .head{
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(20deg, #212121a8, #777777df, #343434b6);
+            padding: 20px;
+            text-align: center;
+            text-shadow: rgb(221, 221, 221) 0 0 5px;
+            color: rgb(0, 0, 0);
+            font-size: 24px;
+            box-shadow: 0 0 8px rgba(151, 151, 151, 0.762);
+        }
+
+        .light .head{
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(20deg, #0037ff, #00f7ff, #8400ff);
+            padding: 20px;
+            text-align: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+        }
+
+        .togglebutton{
+            display: flex;
+            position: absolute;
+            right: 50px;
+            top: 40px;
+            cursor: pointer;
+            border: 2px solid yellow;
+            border-radius: 5px;
+            box-shadow: 0 0 18px rgba(254, 220, 0, 0.574);
+        }
+
+        .light .togglebutton{
+            display: flex;
+            position: absolute;
+            right: 50px;
+            top: 40px;
+            cursor: pointer;
+            border: 2px solid yellow;
+            border-radius: 5px;
+            box-shadow: 0 0 18px rgba(254, 220, 0, 0.574);
+        }
+
+        .dark .togglebutton{
+            display: flex;
+            position: absolute;
+            right: 50px;
+            top: 40px;
+            cursor: pointer;
+            border: 2px solid yellow;
+            border-radius: 5px;
+            box-shadow: 0 0 18px rgba(254, 220, 0, 0.574);
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        .dark h1 {
+            margin: 0;
+        }
+
+        .light h1 {
+            margin: 0;
+        }
+
+        .container{
+            display: flex;
+            max-width: 1450px;
+            margin: 30px auto;
+            padding: 20px;
+            background: linear-gradient(45deg, #0037ff, #00f7ff, #8400ff, #ff69b4);
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+            border-radius: 10px;
+            width: 100%;
+            gap: 4px;
+        }
+
+        .dark .container {
+            display: flex;
+            max-width: 1450px;
+            margin: 30px auto;
+            padding: 20px;
+            background: linear-gradient(45deg, #9e9e9e, #656565, #3c3c3c, #272727);
+            box-shadow: 0 0 8px rgba(161, 161, 161, 0.574);
+            border-radius: 10px;
+            width: 100%;
+            gap: 4px;
+        }
+
+        .light .container{
+            display: flex;
+            max-width: 1450px;
+            margin: 30px auto;
+            padding: 20px;
+            background: linear-gradient(45deg, #0037ff, #00f7ff, #8400ff, #ff69b4);
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+            border-radius: 10px;
+            width: 100%;
+            gap: 4px;
+        }
+
+        .container2, .content {
+            width: 50%;
+            padding: 15px;
+            /* border: 2px solid black; */
+        }
+
+        .dark .container2, .content {
+            width: 50%;
+            padding: 15px;
+            /* border: 2px solid black; */
+        }
+
+        .light .container2, .content {
+            width: 50%;
+            padding: 15px;
+            /* border: 2px solid black; */
+        }
+
+        .container2{
+            background-color: rgb(255, 255, 255);
+            border: 2px solid rgb(255, 255, 255);
+            border-radius: 5px;
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+        }
+
+        .dark .container2{
+            background-color: rgb(119, 119, 119);
+            border: 2px rgb(40, 38, 38);
+            border-radius: 5px;
+            box-shadow: 0 0 3px rgba(164, 164, 164, 0.877);
+        }
+
+        .light .container2{
+            background-color: rgb(255, 255, 255);
+            border: 2px solid rgb(255, 255, 255);
+            border-radius: 5px;
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+        }
+
+        .content{
+            background-color: rgb(255, 255, 255);
+            margin-left: auto;
+            width: 50%; /* Take up 50% of the container's width */
+            min-height: 200px; /* Ensure there's some visible height */
+            padding: 20px; /* Add some padding inside */
+            border-radius: 6px; /* Rounded corners */
+            border: 2px solid rgb(255, 255, 255); /* Solid border */
+            display: flex; /* Use flexbox for layout */
+            flex-direction: column; /* Arrange child elements in a column */
+            align-items: center; /* Center align children horizontally */
+            gap: 20px; /* Space between child elements */
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+        }
+
+        .dark .content {
+            background-color: rgb(119, 119, 119);
+            margin-left: auto;
+            width: 50%; /* Take up 50% of the container's width */
+            min-height: 200px; /* Ensure there's some visible height */
+            padding: 20px; /* Add some padding inside */
+            border-radius: 6px; /* Rounded corners */
+            border: 2px rgb(40, 38, 38); /* Solid border */
+            display: flex; /* Use flexbox for layout */
+            flex-direction: column; /* Arrange child elements in a column */
+            align-items: center; /* Center align children horizontally */
+            gap: 20px; /* Space between child elements */
+            box-shadow: 0 0 3px rgba(156, 156, 156, 0.937);
+        }
+
+        .light .content{
+            background-color: rgb(255, 255, 255);
+            margin-left: auto;
+            width: 50%; /* Take up 50% of the container's width */
+            min-height: 200px; /* Ensure there's some visible height */
+            padding: 20px; /* Add some padding inside */
+            border-radius: 6px; /* Rounded corners */
+            border: 2px solid rgb(255, 255, 255); /* Solid border */
+            display: flex; /* Use flexbox for layout */
+            flex-direction: column; /* Arrange child elements in a column */
+            align-items: center; /* Center align children horizontally */
+            gap: 20px; /* Space between child elements */
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+        }
+
+        .chart-container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            width: 100%; /* Match the parent container's width */
+            align-items: center;
+        }
+
+
+        /* Chart container aligned within .content */
+        /* .dark .chart-container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            width: 100%;
+            align-items: center;
+        }
+
+        .light .chart-container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            width: 100%; 
+            align-items: center;
+        } */
+
+        .chart-item1{
+            width: 100%; /* Take up full width of the container */
+            max-width: 400px; /* Optional: Set a maximum width */
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+            padding: 10px;
+        }
+
+        /* .dark .chart-item1 {
+            width: 100%; 
+            max-width: 400px; 
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(176, 176, 176, 0.808);
+            padding: 10px;
+        }
+
+        .light .chart-item1{
+            width: 100%; 
+            max-width: 400px; 
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+            padding: 10px;
+        } */
+
+        .chart-item{
+            width: 100%; 
+            max-width: 500px; 
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+            padding: 10px;
+        }
+
+        /* .dark .chart-item {
+            width: 100%; 
+            max-width: 500px; 
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(146, 146, 146, 0.912);
+            padding: 10px;
+        } 
+
+        .light .chart-item{
+            width: 100%; 
+            max-width: 500px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+            padding: 10px;
+        } */
+
+        canvas {
+            display: block;
+            width: 100%; /* Full width of the parent container */
+            height: auto; /* Maintain aspect ratio */
+        }
+
+        /* Canvas styling for responsiveness */
+        /* .dark canvas {
+            display: block;
+            width: 100%; 
+            height: auto;
+        }
+
+        .light canvas {
+            display: block;
+            width: 100%; 
+            height: auto; 
+        } */
+
+        .traffic-video {
+            text-align: start;
+            margin-bottom: 40px;
+        }
+
+        .dark .traffic-video {
+            text-align: start;
+            margin-bottom: 40px;
+        }
+
+        .light .traffic-video {
+            text-align: start;
+            margin-bottom: 40px;
+        }
+
+        .traffic-video img{
+            margin-top: 10px;
+            width: 100%;
+            border: 2px solid rgb(255, 255, 255);
+            border-radius: 5px;
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+        }
+
+        .dark .traffic-video img {
+            margin-top: 10px;
+            width: 100%;
+            border: 2px solid rgb(255, 255, 255);
+            border-radius: 5px;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.745);
+        }
+
+        .light .traffic-video img{
+            margin-top: 10px;
+            width: 100%;
+            border: 2px solid rgb(255, 255, 255);
+            border-radius: 5px;
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+        }
+
+        h3{
+            color: #0037ff;
+            font-size: 22px;
+            /* border-bottom: 2px solid #0037ff; */
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .dark h3 {
+            color: #000000;
+            font-size: 22px;
+            /* border-bottom: 2px solid #0037ff; */
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .light h3{
+            color: #0037ff;
+            font-size: 22px;
+            /* border-bottom: 2px solid #0037ff; */
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        p{
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .dark p {
+            font-size: 18px;
+            margin: 10px 0;
+            color: black;
+        }
+
+        .light p{
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .data-field{
+            background-color: #f1f1f1;
+            padding: 10px 15px;
+            border-radius: 5px;
+            display: inline-block;
+            width: auto;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .dark .data-field {
+            background-color: #acacac;
+            padding: 10px 15px;
+            border-radius: 5px;
+            display: inline-block;
+            width: auto;
+            font-weight: bold;
+            color: #000000;
+        }
+
+        .light .data-field{
+            background-color: #f1f1f1;
+            padding: 10px 15px;
+            border-radius: 5px;
+            display: inline-block;
+            width: auto;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .analysis{
+            height: 500px;
+            margin-top: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(-45deg, #0037ff50, #00d0ff4d, rgba(0, 255, 204, 0.308), rgba(0, 255, 110, 0.242), #1eff0053, #bbff0052);
+            background-size: 400% 400%;
+            animation: rolling-gradient 15s ease infinite;
+            padding: 30px;
+            border: 2px solid rgb(255, 255, 255);
+            border-radius: 6px;
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+        }
+
+        .dark .analysis {
+            height: 500px;
+            margin-top: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgb(98, 98, 98);
+            background-size: 400% 400%;
+            /* animation: rolling-gradient 15s ease infinite; */
+            padding: 30px;
+            border: 2px rgb(255, 255, 255);
+            border-radius: 6px;
+            box-shadow: 0 0 8px rgba(205, 205, 205, 0.778);
+        }
+
+        .light .analysis{
+            height: 500px;
+            margin-top: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(-45deg, #0037ff50, #00d0ff4d, rgba(0, 255, 204, 0.308), rgba(0, 255, 110, 0.242), #1eff0053, #bbff0052);
+            background-size: 400% 400%;
+            animation: rolling-gradient 15s ease infinite;
+            padding: 30px;
+            border: 2px solid rgb(255, 255, 255);
+            border-radius: 6px;
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+        }
+
+        @keyframes rolling-gradient {
+            0% {
+                background-position: 0% 0%;
+            }
+            25% {
+                background-position: 50% 0%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            75% {
+                background-position: 50% 100%;
+            }
+            100% {
+                background-position: 0% 0%;
+            }
+        }
+
+        .tl{
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .dark .tl{
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .light .tl{
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .trafficlight{
+            display: flex;
+            color: white;
+            padding: 4px;
+            background-color: black;
+            height: 30px;
+            width: 120px;
+            border: 2px solid black;
+            border-radius: 5px;
+
+            .light {
+                color: white;
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                border: 2px solid #ffffff;
+                margin-right: 10px;
+                background-color: #000;
+                transition: background-color 0.3s ease;
+            }
+
+            p{
+                display: flex;
+                align-self: center;
+                /* font-size: px; */
+                color: white;
+            }
+        }
+
+        .dark .trafficlight{
+            display: flex;
+            color: white;
+            padding: 4px;
+            background-color: black;
+            height: 30px;
+            width: 120px;
+            border: 2px solid black;
+            border-radius: 5px;
+
+            .light {
+                color: white;
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                border: 2px solid #ffffff;
+                margin-right: 10px;
+                background-color: #000;
+                transition: background-color 0.3s ease;
+            }
+
+            p{
+                display: flex;
+                align-self: center;
+                /* font-size: px; */
+                color: white;
+            }
+        }
+
+        .light .trafficlight{
+            display: flex;
+            color: white;
+            padding: 4px;
+            background-color: black;
+            height: 30px;
+            width: 120px;
+            border: 2px solid black;
+            border-radius: 5px;
+
+            .light {
+                color: white;
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                border: 2px solid #ffffff;
+                margin-right: 10px;
+                background-color: #000;
+                transition: background-color 0.3s ease;
+            }
+
+            p{
+                display: flex;
+                align-self: center;
+                /* font-size: px; */
+                color: white;
+            }
+        }
+
+        .foot{
+            font-size: large;
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(20deg, #0037ff, #00f7ff, #8400ff);
+            color: white;
+            /* position: fixed; */
+            bottom: 0;
+            width: 100%;
+        }
+
+        .dark .foot{
+            font-size: large;
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(20deg, #9a9a9a, #616161, #4a4a4a);
+            color: rgb(0, 0, 0);
+            /* position: fixed; */
+            bottom: 0;
+            width: 100%;
+        }
+
+        .light .foot{
+            font-size: large;
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(20deg, #0037ff, #00f7ff, #8400ff);
+            color: white;
+            /* position: fixed; */
+            bottom: 0;
+            width: 100%;
+        }
+
+    </style>
+
+    <script>
+    // Function to update traffic data
+    function updateTrafficData() {
+        fetch('/traffic_data')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('vehicleCount').innerText = data.vehicle_count;
+            document.getElementById('avgSpeed').innerText = data.avg_speed.toFixed(2) + " km/h";
+            document.getElementById('trafficJam').innerText = data.is_traffic_jam ? "Yes" : "No";
+            document.getElementById('heavyVehicles').innerText = data.too_many_heavy_vehicles ? "Yes" : "No";
+            document.getElementById('clearanceTime').innerText = data.estimated_clearance_time.toFixed(2) + " s";
+            
+            // Update both traffic light text and visual indicator
+            const trafficLightText = data.traffic_light_decision[0];
+            const trafficLightDuration = data.traffic_light_decision[1];
+            
+            // Update the text display
+            const trafficLightTextElements = document.querySelectorAll('#trafficLight');
+            trafficLightTextElements.forEach(element => {
+                element.innerText = `for ${trafficLightDuration} s`;
+                element.style.color = getTrafficLightColor(trafficLightText);
+            });
+
+            // Update the visual light indicator
+            const lightElement = document.querySelector('.light');
+            if (lightElement) {
+                lightElement.style.backgroundColor = getTrafficLightColor(trafficLightText);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching traffic data:', error);
+        });
+    }
+
+    // Helper function to get traffic light color
+    function getTrafficLightColor(status) {
+        status = status.toLowerCase();
+        switch(status) {
+            case 'red':
+                return '#ff0000';
+            case 'green':
+                return '#00ff00';
+            case 'yellow':
+                return '#ffff00';
+            default:
+                return '#000000';
+        }
+    }
+
+    // Start updating traffic data when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        updateTrafficData(); // Initial update
+        setInterval(updateTrafficData, 2000); // Refresh every 2 seconds
+    });
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.querySelector('.togglebutton');
+        const body = document.body;
+
+        // URLs or paths to the sun and moon images
+        const sunImageURL = "{{ url_for('static', filename='sun.png') }}"; // Replace with your static image path
+        const moonImageURL = "{{ url_for('static', filename='moon.png') }}"; // Replace with your static image path
+
+        // Set initial state to light mode
+        let isLightMode = true;
+
+        // Create an image element and append it to the toggle button
+        const icon = document.createElement('img');
+        icon.src = sunImageURL; // Initial icon (Sun for Light Mode)
+        icon.alt = 'Sun Icon';
+        icon.style.width = '24px';
+        icon.style.height = '24px';
+        toggleButton.appendChild(icon);
+
+        // Add click event listener to toggle between light and dark mode
+        toggleButton.addEventListener('click', () => {
+            if (isLightMode) {
+                body.classList.remove('light');
+                body.classList.add('dark');
+                icon.src = moonImageURL; // Update icon to Moon
+                icon.alt = 'Moon Icon';
+            } else {
+                body.classList.remove('dark');
+                body.classList.add('light');
+                icon.src = sunImageURL; // Update icon to Sun
+                icon.alt = 'Sun Icon';
+            }
+            isLightMode = !isLightMode; // Toggle state
+        });
+    });
+
+    </script>
+</head>
+
+<body>
+
+    <div class="maincontainer">
+
+ 
+    <header>
+        <div class="head">
+        <h1>Traffic Analysis and Assessment</h1>
+        <div class="togglebutton"></div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="container2">
+        <div class="traffic-video">
+            <!-- <h3>Traffic Video Stream</h3> -->
+            <img src="{{ url_for('video_feed') }}" alt="Live Traffic Stream">
+        </div>
+
+        <div class="analysis">
+        <h3>Traffic Analysis</h3>
+        <p><strong>Vehicle Count:</strong> <span class="data-field" id="vehicleCount">Loading...</span></p>
+        <p><strong>Average Speed:</strong> <span class="data-field" id="avgSpeed">Loading...</span></p>
+        <p><strong>Traffic Jam Condition:</strong> <span class="data-field" id="trafficJam">Loading...</span></p>
+        <p><strong>Many Heavy Vehicles Present:</strong> <span class="data-field" id="heavyVehicles">Loading...</span></p>
+        <p><strong>Estimated Road Clearance Time:</strong> <span class="data-field" id="clearanceTime">Loading...</span></p>
+        <div class="tl">
+        <p><strong>Suggested Traffic Light:</strong></p>
+                <div class="trafficlight">
+                    <div class="light"></div>
+                    <p id="trafficLight">Loading...</p>
+                </div>
+         </div>
+        </div>
+
+        
+    </div>
+
+        <div class="content">
+            <!-- This block will be replaced by specific page content -->
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <footer>
+        <div class="foot">
+        &copy; 2024 GA-8 Group
+        </div>
+    </footer>
+    </div>
+</body>
+</html>

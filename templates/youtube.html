@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Video Stream</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}"> 
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='ystyle.css') }}"> -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(20deg, #0037ff, #00f7ff, #b700ff , #8400ff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        h1 {
+            color: #1201ff;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 95%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 5px solid #fbff00;
+            border-radius: 5px;
+            font-size: 16px;
+            box-shadow: 0 0 15px rgb(255, 255, 0);
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #ffea00;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Enter URL of Traffic Video</h1>
+        <form action="/submit" method="POST">
+            <input type="text" name="youtube_url" value="https://www.youtube.com/watch?v=iJZcjZD0fw0&t=1s" placeholder="Enter YouTube URL" required>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</body>
+</html>

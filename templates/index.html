@@ -1,0 +1,1593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Detection and Traffic Assessment</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}"> 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&family=Rye&display=swap" rel="stylesheet">
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+        }
+        /* Custom scrollbar styles */
+         /* Invisible scrollbar for body */
+         body::-webkit-scrollbar {
+            width: 0px; /* Set width to 0 to hide scrollbar */
+        }
+
+        /* Invisible scrollbar track */
+        body::-webkit-scrollbar-track {
+            background: transparent; /* Make the track invisible */
+        }
+
+        /* Invisible scrollbar thumb */
+        body::-webkit-scrollbar-thumb {
+            background: transparent; /* Make the thumb invisible */
+        }
+
+        .maincontainer{
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .dark .maincontainer{
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #000000;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .light .maincontainer{
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            overflow-x: hidden;
+        }
+        
+        .head{
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(20deg, #0037ff, #00f7ffc6, #8400ff);
+            padding: 20px;
+            text-align: center;
+            /* text-shadow: rgb(0, 30, 255) 0 0 3px; */
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+        }
+
+        .dark .head{
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(20deg, #212121a8, #777777df, #343434b6);
+            padding: 20px;
+            text-align: center;
+            text-shadow: rgb(221, 221, 221) 0 0 5px;
+            color: rgb(0, 0, 0);
+            font-size: 24px;
+            box-shadow: 0 0 8px rgba(151, 151, 151, 0.762);
+        }
+
+        .light .head{
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(20deg, #0037ff, #00f7ffc6, #8400ff);
+            padding: 20px;
+            text-align: center;
+            /* text-shadow: rgb(0, 30, 255) 0 0 5px; */
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+        }
+
+        .head-content{
+            /* width: 100%; */
+            margin-left: 330px;
+            display: flex;
+            gap: 140px;
+            justify-content: space-between;
+        }
+
+        .light .head-content{
+            /* width: 100%; */
+            margin-left: 330px;
+            display: flex;
+            gap: 140px;
+            justify-content: space-between;
+        }
+
+        .dark .head-content{
+            /* width: 100%; */
+            margin-left: 330px;
+            display: flex;
+            gap: 140px;
+            justify-content: space-between;
+        }
+
+        .stylishtext{
+            font-family: "Rye", serif;
+            font-weight: 400;
+            font-style: normal;
+            text-shadow: 0 0 18px rgba(0, 13, 254, 0.89);
+            text-align: center;
+            flex: 1.5;
+        }
+
+        .light .stylishtext{
+            font-family: "Rye", serif;
+            font-weight: 400;
+            font-style: normal;
+            text-shadow: 0 0 18px rgba(0, 13, 254, 0.888);
+        }
+
+        .dark .stylishtext{
+            font-family: "Rye", serif;
+            font-weight: 400;
+            font-style: normal;
+            text-shadow: 0 0 18px rgba(255, 255, 255, 0.649);
+        }
+
+        .buttons{
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            margin-top: 15px;
+            align-items: flex-start;
+        }
+
+        .subbuttons{
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            margin-top: 0px;
+            align-items: flex-start;
+        }
+
+        .togglebutton{
+            display: flex;
+            /* position: absolute; */
+            /* right: 50px;
+            top: 35px; */
+            cursor: pointer;
+            background-color: white;
+            border: 1px solid rgb(0, 47, 255);
+            border-radius: 5px;
+            box-shadow: 0 0 8px rgb(0, 38, 254);
+        }
+
+        .light .togglebutton{
+            display: flex;
+            /* position: absolute;
+            right: 50px;
+            top: 35px; */
+            cursor: pointer;
+            background-color: white;
+            border: 1px solid rgb(0, 47, 255);
+            border-radius: 5px;
+            box-shadow: 0 0 8px rgb(0, 38, 254);
+        }
+
+        .dark .togglebutton{
+            display: flex;
+            /* position: absolute;
+            right: 50px;
+            top: 35px; */
+            cursor: pointer;
+            background-color: rgba(255, 255, 255, 0.368);
+            border: 1px solid rgb(123, 123, 123);
+            border-radius: 5px;
+            box-shadow: 0 0 8px rgb(255, 255, 255);
+        }
+
+        .databasebutton{
+            display: flex;
+            /* position: absolute;
+            right: 100px;
+            top: 33px; */
+            cursor: pointer;
+            background-color: white;
+            border: 1px solid rgb(0, 47, 255);
+            border-radius: 5px;
+            box-shadow: 0 0 8px rgb(0, 38, 254);
+        }
+
+        .light .databasebutton{
+            display: flex;
+            /* position: absolute;
+            right: 100px;
+            top: 33px; */
+            cursor: pointer;
+            background-color: white;
+            border: 1px solid rgb(0, 47, 255);
+            border-radius: 5px;
+            box-shadow: 0 0 8px rgb(0, 38, 254);
+        }
+
+        .dark .databasebutton{
+            display: flex;
+            /* position: absolute;
+            right: 100px;
+            top: 33px; */
+            cursor: pointer;
+            background-color: rgba(255, 255, 255, 0.368);
+            border: 1px solid rgb(123, 123, 123);
+            border-radius: 5px;
+            box-shadow: 0 0 8px rgb(255, 255, 255);
+        }
+
+        .eyebutton{
+            display: flex;
+            /* position: absolute;
+            right: 150px;
+            top: 33px; */
+            cursor: pointer;
+            cursor: pointer;
+            background-color: white;
+            border: 1px solid rgb(0, 47, 255);
+            border-radius: 5px;
+            box-shadow: 0 0 8px rgb(0, 38, 254);
+        }
+
+        .light .eyebutton{
+            display: flex;
+            /* position: absolute;
+            right: 150px;
+            top: 33px; */
+            cursor: pointer;
+            cursor: pointer;
+            background-color: white;
+            border: 1px solid rgb(0, 47, 255);
+            border-radius: 5px;
+            box-shadow: 0 0 8px rgb(0, 38, 254);
+        }
+
+        .dark .eyebutton{
+            display: flex;
+            /* position: absolute;
+            right: 150px;
+            top: 33px; */
+            cursor: pointer;
+            cursor: pointer;
+            background-color: rgba(255, 255, 255, 0.368);
+            border: 1px solid rgb(123, 123, 123);
+            border-radius: 5px;
+            box-shadow: 0 0 8px rgb(255, 255, 255);
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        .dark h1 {
+            margin: 0;
+        }
+
+        .light h1 {
+            margin: 0;
+        }
+
+        .container{
+            display: flex;
+            max-width: 1450px;
+            margin: 30px auto;
+            padding: 20px;
+            background: linear-gradient(45deg, #0037ff, #00f7ff, #8400ff, #ff69b4);
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+            border-radius: 10px;
+            width: 100%;
+            gap: 4px;
+        }
+
+        .dark .container {
+            display: flex;
+            max-width: 1450px;
+            margin: 30px auto;
+            padding: 20px;
+            background: linear-gradient(45deg, #9e9e9e, #656565, #3c3c3c, #272727);
+            box-shadow: 0 0 8px rgba(161, 161, 161, 0.574);
+            border-radius: 10px;
+            width: 100%;
+            gap: 4px;
+        }
+
+        .light .container{
+            display: flex;
+            max-width: 1450px;
+            margin: 30px auto;
+            padding: 20px;
+            background: linear-gradient(45deg, #0037ff, #00f7ff, #8400ff, #ff69b4);
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+            border-radius: 10px;
+            width: 100%;
+            gap: 4px;
+        }
+
+        .container2, .content {
+            width: 50%;
+            padding: 15px;
+            /* border: 2px solid black; */
+        }
+
+        .dark .container2, .content {
+            width: 50%;
+            padding: 15px;
+            /* border: 2px solid black; */
+        }
+
+        .light .container2, .content {
+            width: 50%;
+            padding: 15px;
+            /* border: 2px solid black; */
+        }
+
+        .container2{
+            background-color: rgb(255, 255, 255);
+            border: 2px solid rgb(255, 255, 255);
+            border-radius: 5px;
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+        }
+
+        .dark .container2{
+            background-color: rgb(119, 119, 119);
+            border: 2px rgb(40, 38, 38);
+            border-radius: 5px;
+            box-shadow: 0 0 3px rgba(164, 164, 164, 0.877);
+        }
+
+        .light .container2{
+            background-color: rgb(255, 255, 255);
+            border: 2px solid rgb(255, 255, 255);
+            border-radius: 5px;
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+        }
+
+        .content{
+            background-color: rgb(255, 255, 255);
+            margin-left: auto;
+            width: 50%; /* Take up 50% of the container's width */
+            min-height: 200px; /* Ensure there's some visible height */
+            padding: 20px; /* Add some padding inside */
+            border-radius: 6px; /* Rounded corners */
+            border: 2px solid rgb(255, 255, 255); /* Solid border */
+            display: flex; /* Use flexbox for layout */
+            flex-direction: column; /* Arrange child elements in a column */
+            align-items: center; /* Center align children horizontally */
+            gap: 20px; /* Space between child elements */
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+        }
+
+        .dark .content {
+            background-color: rgb(119, 119, 119);
+            margin-left: auto;
+            width: 50%; /* Take up 50% of the container's width */
+            min-height: 200px; /* Ensure there's some visible height */
+            padding: 20px; /* Add some padding inside */
+            border-radius: 6px; /* Rounded corners */
+            border: 2px rgb(40, 38, 38); /* Solid border */
+            display: flex; /* Use flexbox for layout */
+            flex-direction: column; /* Arrange child elements in a column */
+            align-items: center; /* Center align children horizontally */
+            gap: 20px; /* Space between child elements */
+            box-shadow: 0 0 3px rgba(156, 156, 156, 0.937);
+        }
+
+        .light .content{
+            background-color: rgb(255, 255, 255);
+            margin-left: auto;
+            width: 50%; /* Take up 50% of the container's width */
+            min-height: 200px; /* Ensure there's some visible height */
+            padding: 20px; /* Add some padding inside */
+            border-radius: 6px; /* Rounded corners */
+            border: 2px solid rgb(255, 255, 255); /* Solid border */
+            display: flex; /* Use flexbox for layout */
+            flex-direction: column; /* Arrange child elements in a column */
+            align-items: center; /* Center align children horizontally */
+            gap: 20px; /* Space between child elements */
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+        }
+
+        .chart-container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            width: 100%; /* Match the parent container's width */
+            align-items: center;
+        }
+
+
+        /* Chart container aligned within .content */
+        /* .dark .chart-container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            width: 100%;
+            align-items: center;
+        }
+
+        .light .chart-container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            width: 100%; 
+            align-items: center;
+        } */
+
+        .chart-item1{
+            width: 100%; /* Take up full width of the container */
+            max-width: 400px; /* Optional: Set a maximum width */
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+            padding: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for scaling and shadow */
+            cursor: pointer;
+            color: black;
+        }
+
+        .chart-item1:hover {
+            /* transform: scale(1.05); Enlarges the element by 5% */
+            box-shadow: 0 0 12px rgb(241, 254, 0); /* Enhances the shadow effect on hover */
+            z-index: 1000;
+        }
+
+        .light .chart-item1:hover {
+            /* transform: scale(1.05); Enlarges the element by 5% */
+            box-shadow: 0 0 12px rgb(241, 254, 0); /* Enhances the shadow effect on hover */
+            z-index: 1000;
+        }
+
+        .dark .chart-item1:hover {
+            /* transform: scale(1.05); Enlarges the element by 5% */
+            box-shadow: 0 0 12px rgb(255, 255, 255); /* Enhances the shadow effect on hover */
+            z-index: 1000;
+        }
+
+        .dark .chart-item1 {
+            width: 100%; 
+            max-width: 400px; 
+            background: #6c6c6c;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(176, 176, 176, 0.808);
+            padding: 10px;
+            color: black;
+        }
+
+        .light .chart-item1{
+            width: 100%; 
+            max-width: 400px; 
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+            padding: 10px;
+            color: black;
+        } 
+
+        .chart-item{
+            width: 100%; 
+            max-width: 500px; 
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+            padding: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for scaling and shadow */
+            cursor: pointer;
+            color: black;
+        }
+
+        .chart-item:hover {
+            /* transform: scale(1.05); Enlarges the element by 5% */
+            box-shadow: 0 0 12px rgb(241, 254, 0); /* Enhances the shadow effect on hover */
+            z-index: 1000;
+        }
+
+        .light .chart-item:hover {
+            /* transform: scale(1.05); Enlarges the element by 5% */
+            box-shadow: 0 0 12px rgb(241, 254, 0); /* Enhances the shadow effect on hover */
+            z-index: 1000;
+        }
+
+        .dark .chart-item:hover {
+            /* transform: scale(1.05); Enlarges the element by 5% */
+            box-shadow: 0 0 12px rgb(255, 255, 255); /* Enhances the shadow effect on hover */
+            z-index: 1000;
+        }
+
+        .dark .chart-item {
+            width: 100%; 
+            max-width: 500px; 
+            background: #6c6c6c;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(146, 146, 146, 0.912);
+            padding: 10px;
+            color: black;
+        } 
+
+        .light .chart-item{
+            width: 100%; 
+            max-width: 500px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+            padding: 10px;
+            color: black;
+        } 
+
+        .chart-item, .chart-item1 {
+            transition: all 0.3s ease;
+        }
+
+        canvas {
+            display: block;
+            width: 100%; /* Full width of the parent container */
+            height: auto; /* Maintain aspect ratio */
+        }
+
+        /* Canvas styling for responsiveness */
+        /* .dark canvas {
+            display: block;
+            width: 100%; 
+            height: auto;
+        }
+
+        .light canvas {
+            display: block;
+            width: 100%; 
+            height: auto; 
+        } */
+
+        .traffic-video {
+            text-align: start;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .dark .traffic-video {
+            text-align: start;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .light .traffic-video {
+            text-align: start;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .traffic-video img{
+            margin-top: 10px;
+            width: 100%;
+            border: 2px solid rgb(255, 255, 255);
+            border-radius: 5px;
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+            cursor: pointer;
+        }
+
+        .dark .traffic-video img {
+            margin-top: 10px;
+            width: 100%;
+            border: 2px solid rgb(255, 255, 255);
+            border-radius: 5px;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.745);
+            cursor: pointer;
+        }
+
+        .light .traffic-video img{
+            margin-top: 10px;
+            width: 100%;
+            border: 2px solid rgb(255, 255, 255);
+            border-radius: 5px;
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+            cursor: pointer;
+        }
+
+        h3{
+            color: #0037ff;
+            font-size: 22px;
+            /* border-bottom: 2px solid #0037ff; */
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .dark h3 {
+            color: #000000;
+            font-size: 22px;
+            /* border-bottom: 2px solid #0037ff; */
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .light h3{
+            color: #0037ff;
+            font-size: 22px;
+            /* border-bottom: 2px solid #0037ff; */
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        p{
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .dark p {
+            font-size: 18px;
+            margin: 10px 0;
+            color: black;
+        }
+
+        .light p{
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .data-field{
+            background-color: #f1f1f1;
+            padding: 10px 15px;
+            border-radius: 5px;
+            display: inline-block;
+            width: auto;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .dark .data-field {
+            background-color: #acacac;
+            padding: 10px 15px;
+            border-radius: 5px;
+            display: inline-block;
+            width: auto;
+            font-weight: bold;
+            color: #000000;
+        }
+
+        .light .data-field{
+            background-color: #f1f1f1;
+            padding: 10px 15px;
+            border-radius: 5px;
+            display: inline-block;
+            width: auto;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .analysis{
+            height: 500px;
+            margin-top: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(-45deg, #0037ff50, #00d0ff4d, rgba(0, 255, 204, 0.308), rgba(0, 255, 110, 0.242), #1eff0053, #bbff0052);
+            background-size: 400% 400%;
+            animation: rolling-gradient 15s ease infinite;
+            padding: 30px;
+            border: 2px solid rgb(255, 255, 255);
+            border-radius: 6px;
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+        }
+
+        .dark .analysis {
+            height: 500px;
+            margin-top: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgb(98, 98, 98);
+            background-size: 400% 400%;
+            /* animation: rolling-gradient 15s ease infinite; */
+            padding: 30px;
+            border: 2px rgb(255, 255, 255);
+            border-radius: 6px;
+            box-shadow: 0 0 8px rgba(205, 205, 205, 0.778);
+        }
+
+        .light .analysis{
+            height: 500px;
+            margin-top: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(-45deg, #0037ff50, #00d0ff4d, rgba(0, 255, 204, 0.308), rgba(0, 255, 110, 0.242), #1eff0053, #bbff0052);
+            background-size: 400% 400%;
+            animation: rolling-gradient 15s ease infinite;
+            padding: 30px;
+            border: 2px solid rgb(255, 255, 255);
+            border-radius: 6px;
+            box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+        }
+
+        @keyframes rolling-gradient {
+            0% {
+                background-position: 0% 0%;
+            }
+            25% {
+                background-position: 50% 0%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            75% {
+                background-position: 50% 100%;
+            }
+            100% {
+                background-position: 0% 0%;
+            }
+        }
+
+        .tl{
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .dark .tl{
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .light .tl{
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .trafficlight{
+            display: flex;
+            color: white;
+            padding: 4px;
+            background-color: black;
+            height: 30px;
+            width: 120px;
+            border: 2px solid black;
+            border-radius: 5px;
+
+            .light {
+                color: white;
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                border: 2px solid #ffffff;
+                margin-right: 10px;
+                background-color: #000;
+                transition: background-color 0.3s ease;
+            }
+
+            p{
+                display: flex;
+                align-self: center;
+                /* font-size: px; */
+                color: white;
+            }
+        }
+
+        .dark .trafficlight{
+            display: flex;
+            color: white;
+            padding: 4px;
+            background-color: black;
+            height: 30px;
+            width: 120px;
+            border: 2px solid black;
+            border-radius: 5px;
+
+            .light {
+                color: white;
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                border: 2px solid #ffffff;
+                margin-right: 10px;
+                background-color: #000;
+                transition: background-color 0.3s ease;
+            }
+
+            p{
+                display: flex;
+                align-self: center;
+                /* font-size: px; */
+                color: white;
+            }
+        }
+
+        .light .trafficlight{
+            display: flex;
+            color: white;
+            padding: 4px;
+            background-color: black;
+            height: 30px;
+            width: 120px;
+            border: 2px solid black;
+            border-radius: 5px;
+
+            .light {
+                color: white;
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                border: 2px solid #ffffff;
+                margin-right: 10px;
+                background-color: #000;
+                transition: background-color 0.3s ease;
+            }
+
+            p{
+                display: flex;
+                align-self: center;
+                /* font-size: px; */
+                color: white;
+            }
+        }
+
+        .foot{
+            font-weight: 700;
+            text-shadow: 0 0 8px rgb(0, 13, 255);
+            font-size: large;
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(20deg, #0037ff, #00f7ff, #8400ff);
+            color: white;
+            /* position: fixed; */
+            bottom: 0;
+            width: 100%;
+        }
+
+        .dark .foot{
+            font-weight: 700;
+            text-shadow: 0 0 8px rgb(255, 255, 255);
+            font-size: large;
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(20deg, #9a9a9a, #616161, #4a4a4a);
+            color: rgb(0, 0, 0);
+            /* position: fixed; */
+            bottom: 0;
+            width: 100%;
+        }
+
+        .light .foot{
+            font-weight: 700;
+            text-shadow: 0 0 8px rgb(0, 13, 255);
+            font-size: large;
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(20deg, #0037ff, #00f7ff, #8400ff);
+            color: white;
+            /* position: fixed; */
+            bottom: 0;
+            width: 100%;
+        }
+
+        .infocard {
+            position: absolute;
+            bottom: 30px;
+            left: -90px;
+            display: none;
+            padding: 5px;
+            background: rgba(0, 42, 255, 0.4);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            width: 370px;
+            height: 150px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            color: black;
+            text-shadow: none;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 13, 255, 0.1), 
+            inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .light .infocard {
+            position: absolute;
+            bottom: 30px;
+            left: -90px;
+            display: none;
+            padding: 5px;
+            background: rgba(0, 42, 255, 0.4);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            width: 370px;
+            height: 150px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            color: black;
+            text-shadow: none;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 13, 255, 0.1), 
+            inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .dark .infocard {
+            position: absolute;
+            bottom: 30px;
+            left: -90px;
+            display: none;
+            padding: 5px;
+            background: rgba(255, 255, 255, 0.562);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            width: 370px;
+            height: 150px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            color: black;
+            text-shadow: none;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 13, 255, 0.1), 
+            inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .showcard {
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-radius: 5px;
+            background: linear-gradient(-45deg, #002aff, #00a6ff, rgb(0, 255, 251), rgb(0, 242, 255), #008cff, #002aff);
+            background-size: 400% 400%;
+            animation: rolling-gradient 15s ease infinite;
+            box-shadow: 0 0 18px rgb(0, 55, 254);
+            display: inline-block;
+            margin: 0;
+            padding: 5px; 
+            position: relative; 
+        }
+
+        .dark .showcard {
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-radius: 5px;
+            background: linear-gradient(-45deg, #5b5b5b, #8b8b8b, rgb(196, 196, 196), rgb(216, 216, 216), #909090, #656565);
+            background-size: 400% 400%;
+            animation: rolling-gradient 15s ease infinite;
+            box-shadow: 0 0 18px rgb(211, 211, 211);
+            display: inline-block;
+            margin: 0;
+            padding: 5px; 
+            position: relative; 
+        }
+
+        .light .showcard {
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-radius: 5px;
+            background: linear-gradient(-45deg, #002aff, #00a6ff, rgb(0, 255, 251), rgb(0, 242, 255), #008cff, #002aff);
+            background-size: 400% 400%;
+            animation: rolling-gradient 15s ease infinite;
+            box-shadow: 0 0 18px rgb(0, 55, 254);
+            display: inline-block;
+            margin: 0;
+            padding: 5px; 
+            position: relative; 
+        }
+
+        .showcard:hover {
+            /* background-color: red; */
+            .infocard{
+                display: block;
+            }
+        }
+
+
+        .datedisplay {
+            padding: 5px;
+            position: absolute;
+            left: 50px;
+            top: 20px;
+            text-align: center;
+            margin-bottom: 10px;
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 13, 255, 0.1), 
+            inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        #date {
+            font-size: 20px;
+            font-weight: bold;
+            color: #000000;
+        }
+
+        #time {
+            margin-top: 3px;
+            font-size: 17px;
+            color: #000000;
+        }
+
+
+        .loader {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        background: rgba(255, 255, 255, 0.4);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        z-index: 9999;
+    }
+
+    .traffic-light-loader {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        width: 60px;
+        height: 300px;
+        background-color: black;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    }
+
+    .light1 {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background-color: #555;
+        transition: background-color 0.3s ease;
+    }
+
+    .light1.active {
+        background-color: currentColor;
+    }
+
+    .red {
+        color: red;
+    }
+
+    .yellow {
+        color: yellow;
+    }
+
+    .green {
+        color: green;
+    }
+
+
+        .videoloader {
+            border: 4px solid #ffffff; /* Light grey */
+            border-top: 4px solid #0008ff; /* Blue */
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            top: 45%;
+            left: 45%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            box-shadow: 0 0 4px rgb(0, 59, 254);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+
+        .tooltip-container {
+            position: relative; /* Ensures that the tooltip position is relative to this container */
+        }
+
+        .tooltip-text, .tooltip-text1, .tooltip-text2 {
+            visibility: hidden; /* Initially hide the tooltip */
+            position: absolute;
+            top: 100%; /* Position it directly below the button */
+            left: 50%; /* Center it horizontally with respect to the button */
+            transform: translateX(-50%); /* Adjust for exact centering */
+            background-color: rgba(0, 0, 0, 0.75); /* Tooltip background color */
+            color: white; /* Text color */
+            padding: 5px 10px; /* Padding for the tooltip */
+            border-radius: 4px; /* Rounded corners */
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 10; /* Make sure it's above other content */
+        }
+        
+
+        .tooltip-container:hover .tooltip-text, .tooltip-container:hover .tooltip-text1, .tooltip-container:hover .tooltip-text2 {
+            visibility: visible; /* Show the tooltip on hover */
+        }
+
+
+    </style>
+
+    <script>
+    // Function to update traffic data
+    function updateTrafficData() {
+        fetch('/traffic_data')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('vehicleCount').innerText = data.vehicle_count;
+            document.getElementById('avgSpeed').innerText = data.avg_speed.toFixed(2) + " km/h";
+            document.getElementById('trafficJam').innerText = data.is_traffic_jam ? "Yes" : "No";
+            document.getElementById('heavyVehicles').innerText = data.too_many_heavy_vehicles ? "Yes" : "No";
+            document.getElementById('clearanceTime').innerText = data.estimated_clearance_time.toFixed(2) + " s";
+            
+            // Update both traffic light text and visual indicator
+            const trafficLightText = data.traffic_light_decision[0];
+            const trafficLightDuration = data.traffic_light_decision[1];
+            
+            // Update the text display
+            const trafficLightTextElements = document.querySelectorAll('#trafficLight');
+            trafficLightTextElements.forEach(element => {
+                element.innerText = `for ${trafficLightDuration} s`;
+                element.style.color = getTrafficLightColor(trafficLightText);
+            });
+
+            // Update the visual light indicator
+            const lightElement = document.querySelector('.light');
+            if (lightElement) {
+                lightElement.style.backgroundColor = getTrafficLightColor(trafficLightText);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching traffic data:', error);
+        });
+    }
+
+    // Helper function to get traffic light color
+    function getTrafficLightColor(status) {
+        status = status.toLowerCase();
+        switch(status) {
+            case 'red':
+                return '#ff0000';
+            case 'green':
+                return '#00ff00';
+            case 'yellow':
+                return '#ffff00';
+            default:
+                return '#000000';
+        }
+    }
+
+    // Start updating traffic data when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        updateTrafficData(); // Initial update
+        setInterval(updateTrafficData, 2000); // Refresh every 2 seconds
+    });
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+        const toggleButton = document.querySelector('.togglebutton');
+        const tooltipText = document.querySelector('.tooltip-text2');
+        const body = document.body;
+
+        // URLs or paths to the sun and moon images
+        const sunImageURL = "{{ url_for('static', filename='sun.png') }}"; // Replace with your static image path
+        const moonImageURL = "{{ url_for('static', filename='moon.png') }}"; // Replace with your static image path
+
+        // Set initial state to light mode
+        let isLightMode = true;
+
+        // Create an image element and append it to the toggle button
+        const icon = document.createElement('img');
+        icon.src = sunImageURL; // Initial icon (Sun for Light Mode)
+        icon.alt = 'Sun Icon';
+        icon.style.width = '30px';
+        icon.style.height = '30px';
+        toggleButton.appendChild(icon);
+
+        // Add click event listener to toggle between light and dark mode
+        toggleButton.addEventListener('click', () => {
+            if (isLightMode) {
+                body.classList.remove('light');
+                body.classList.add('dark');
+                icon.src = moonImageURL; // Update icon to Moon
+                icon.alt = 'Moon Icon';
+                tooltipText.textContent = 'Dark Mode';
+            } else {
+                body.classList.remove('dark');
+                body.classList.add('light');
+                icon.src = sunImageURL; // Update icon to Sun
+                icon.alt = 'Sun Icon';
+                tooltipText.textContent = 'Light Mode';
+            }
+            isLightMode = !isLightMode; // Toggle state
+        });
+    });
+
+    function enterFullscreen() {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            } else if (document.documentElement.mozRequestFullScreen) { // Firefox
+                document.documentElement.mozRequestFullScreen();
+            } else if (document.documentElement.webkitRequestFullscreen) { // Chrome, Safari, Opera
+                document.documentElement.webkitRequestFullscreen();
+            } else if (document.documentElement.msRequestFullscreen) { // IE/Edge
+                document.documentElement.msRequestFullscreen();
+            }
+        }
+
+        // Function to exit fullscreen
+        function exitFullscreen() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.mozCancelFullScreen) { // Firefox
+                document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) { // Chrome, Safari, Opera
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) { // IE/Edge
+                document.msExitFullscreen();
+            }
+        }
+
+        // Toggle fullscreen based on the current state
+        function toggleFullscreen() {
+            if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
+                // If already in fullscreen, exit fullscreen
+                exitFullscreen();
+            } else {
+                // If not in fullscreen, enter fullscreen
+                enterFullscreen();
+            }
+        }
+
+        // Listen for the "F" key press to toggle fullscreen
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'f' || event.key === 'F') { // Detects 'f' or 'F' key
+                toggleFullscreen();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+        function updateDateTimeDisplay() {
+            const dateElement = document.getElementById('date');
+            const timeElement = document.getElementById('time');
+            const now = new Date();
+
+            // Format date
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            dateElement.textContent = now.toLocaleDateString(undefined, dateOptions);
+
+            // Format time
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            timeElement.textContent = now.toLocaleTimeString(undefined, timeOptions);
+        }
+
+        // Update the date and time immediately on load
+        updateDateTimeDisplay();
+
+        // Update every second for real-time display
+        setInterval(updateDateTimeDisplay, 1000);
+    });
+
+        //     document.addEventListener('DOMContentLoaded', () => {
+        //     // Select all chart items
+        //     const chartItems = document.querySelectorAll('.chart-item, .chart-item1');
+
+        //     chartItems.forEach(item => {
+        //         // Track the current scale state for each item
+        //         let isEnlarged = false;
+
+        //         item.addEventListener('click', () => {
+        //             if (!isEnlarged) {
+        //                 // Enlarge the clicked item and center it
+        //                 item.style.transform = 'scale(1.35)';
+        //                 item.style.zIndex = '1000';
+        //                 item.style.position = 'absolute';
+        //                 item.style.top = '40%';
+        //                 item.style.left = '40%';
+        //                 // item.style.transform = 'translate(-50%, -50%) scale(2)';
+                        
+        //             } else {
+        //                 // Return to original size
+        //                 item.style.transform = 'scale(1)';
+        //                 item.style.zIndex = '1';
+        //                 item.style.position = 'static';
+        //             }
+
+        //             // Toggle the scale state
+        //             isEnlarged = !isEnlarged;
+        //         });
+        //     });
+        // });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Select all chart items
+            const chartContainer = document.querySelector('.container');
+            const chartItems = document.querySelectorAll('.chart-item, .chart-item1, .traffic-video');
+
+            // Create an overlay to prevent interactions
+            const overlay = document.createElement('div');
+            overlay.classList.add('chart-overlay');
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 999;
+                display: none;
+                cursor: pointer;
+            `;
+            document.body.appendChild(overlay);
+
+            chartItems.forEach(item => {
+                // Track the current scale state for each item
+                let isEnlarged = false;
+
+                item.addEventListener('click', () => {
+                    if (!isEnlarged) {
+                        // First, disable all other items
+                        chartItems.forEach(otherItem => {
+                            if (otherItem !== item) {
+                                otherItem.style.pointerEvents = 'none';
+                                otherItem.style.filter = 'blur(3px)';
+                                otherItem.style.opacity = '0.7';
+                            }
+                        });
+
+                                // Enlarge the clicked item
+                        item.style.transform = 'scale(1.45)';
+                        item.style.zIndex = '10000';  // Ensure it's above the overlay
+                        item.style.position = 'fixed';  // Position relative to the viewport
+                        
+                        // Center the item
+                        item.style.top = '50%';
+                        item.style.left = '50%';
+                        item.style.transform = 'translate(-50%, -50%) scale(1.45)';
+
+                        // Show overlay to prevent any other interactions
+                        overlay.style.display = 'block';
+                    } else {
+                        // Return to original state
+                        chartItems.forEach(otherItem => {
+                            otherItem.style.pointerEvents = 'auto';
+                            otherItem.style.filter = 'none';
+                            otherItem.style.opacity = '1';
+                        });
+
+                        // Reset the clicked item
+                        item.style.transform = 'scale(1)';
+                        item.style.zIndex = '1';
+                        item.style.position = 'static';
+
+                        // Hide the overlay
+                        overlay.style.display = 'none';
+                    }
+
+                    // Toggle the scale state
+                    isEnlarged = !isEnlarged;
+                });
+            });
+
+            // Optional: Close enlarged view if clicking the overlay
+            overlay.addEventListener('click', () => {
+                const enlargedItem = document.querySelector('.chart-item[style*="scale(2)"], .chart-item1[style*="scale(2)"]');
+                if (enlargedItem) {
+                    enlargedItem.click(); // Trigger the existing click handler to reset
+                }
+            });
+        });
+
+        let currentLight = 0;
+
+        function changeLight() {
+        const lights = document.querySelectorAll('.light1');
+        
+        // Remove 'active' class from all lights
+        lights.forEach(light => light.classList.remove('active'));
+        
+        // Add 'active' class to the current light
+        lights[currentLight].classList.add('active');
+        
+        // Move to the next light
+        currentLight = (currentLight + 1) % lights.length;
+        }
+
+        // Change light every second
+        const interval = setInterval(changeLight, 1000);
+
+        document.addEventListener('DOMContentLoaded', () => {
+        function checkVideoFeed() {
+            const videoElement = document.getElementById('videoStream');
+
+            if (!videoElement) {
+            console.error('Video element not found');
+            return;
+            }
+
+            videoElement.onload = () => {
+            // console.log('Video feed is ready.');
+            document.querySelector('.loader').style.display = 'none';
+            // document.querySelector('.app-content').style.display = 'block';
+            clearInterval(interval); // Stop the traffic light animation
+            };
+
+            videoElement.onerror = () => {
+            console.error('Video feed not yet available. Retrying...');
+            setTimeout(checkVideoFeed, 1000); // Retry after 1 second
+            };
+        }
+
+        // Start checking for the video feed
+        checkVideoFeed();
+        });
+
+         document.addEventListener("DOMContentLoaded", function () {
+            const eyeButton = document.getElementById("eyebutton");
+            const videoStream = document.getElementById("videoStream");
+            const loader = document.getElementById("videoloader");
+            const tooltipText = document.querySelector('.tooltip-text1');
+
+            eyeButton.addEventListener("click", function () {
+                // Show the loader
+                loader.style.display = "block";
+
+                fetch("{{ url_for('toggle_video') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.show_video) {
+                        // Video is visible
+                        eyeButton.src = "{{ url_for('static', filename='eyeopen.png') }}"; // Normal eye icon
+                        tooltipText.textContent = 'Detection Visibility On';
+                    } else {
+                        // Video is invisible
+                        eyeButton.src = "{{ url_for('static', filename='eyeclose.png') }}"; // Eye-slash icon
+                        tooltipText.textContent = 'Detection Visibility Off';
+                    }
+                })
+                .catch(error => console.error("Error toggling video visibility:", error))
+                .finally(() => {
+                    // Hide the loader after completion
+                    setTimeout(() => {
+                        loader.style.display = "none";
+                    }, 5000); // Adjust the timeout to match server response time
+                });
+            });
+        });
+
+
+    </script>
+</head>
+
+<body>
+    <div class="maincontainer"> 
+        <div class="loader">
+            <h1>Loading....</h1>
+            <div class="traffic-light-loader">
+              <div class="light1 red"></div>
+              <div class="light1 yellow"></div>
+              <div class="light1 green"></div>
+            </div>
+          </div>
+    <header>
+      <div class="head">
+            <div class="datedisplay">
+                <div id="date">Loading</div>
+                <div id="time">Loading</div>
+            </div>
+        <div class="head-content">
+        <h1 class="stylishtext">Traffic Analysis and Assessment</h1>
+        <div class="buttons">
+        <div class="subbuttons">
+        <div class="tooltip-container">
+            <img 
+              class="eyebutton" 
+              id="eyebutton" 
+              style="width: 30px; height: 30px;" 
+              src="{{ url_for('static', filename='eyeopen.png') }}" 
+              alt="eye"
+            >
+            <span class="tooltip-text1">Detection Visibility On</span>
+          </div>
+          
+          <!-- Database Button -->
+          <div class="tooltip-container">
+            <a 
+              href="https://docs.google.com/spreadsheets/d/1IqDjIwgO8df8xxBepbhIB4lIby268aFYRcinTJcPKeg/edit?gid=0#gid=0" 
+              class="databasebutton" 
+              target="_blank"
+            >
+              <img 
+                style="width: 30px; height: 30px;" 
+                src="{{ url_for('static', filename='database.png') }}" 
+                alt="Table"
+              >
+            </a>
+            <span class="tooltip-text">Open Database</span>
+          </div>
+        </div>
+          <!-- Toggle Button -->
+          <div class="tooltip-container">
+            <div class="togglebutton"></div>
+            <span class="tooltip-text2">Light Mode</span>
+          </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="container">
+        <div class="container2">
+        <div class="traffic-video">
+            <!-- <h3>Traffic Video Stream</h3> -->
+            <div id="videoloader" class="videoloader" style="display: none;"></div>
+            <img src="{{ url_for('video_feed') }}" alt="Live Traffic Stream" id="videoStream">
+        </div>
+
+        <div class="analysis">
+        <h3>Traffic Analysis</h3>
+        <p><strong>Vehicle Count:</strong> <span class="data-field" id="vehicleCount">Loading...</span></p>
+        <p><strong>Average Speed:</strong> <span class="data-field" id="avgSpeed">Loading...</span></p>
+        <p><strong>Traffic Jam Condition:</strong> <span class="data-field" id="trafficJam">Loading...</span></p>
+        <p><strong>Many Heavy Vehicles Present:</strong> <span class="data-field" id="heavyVehicles">Loading...</span></p>
+        <p><strong>Estimated Road Clearance Time:</strong> <span class="data-field" id="clearanceTime">Loading...</span></p>
+        <div class="tl">
+        <p><strong>Suggested Traffic Light:</strong></p>
+                <div class="trafficlight">
+                    <div class="light"></div>
+                    <p id="trafficLight">Loading...</p>
+                </div>
+         </div>
+        </div>
+
+        
+    </div>
+
+        <div class="content">
+            <!-- This block will be replaced by specific page content -->
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <footer>
+        <div class="foot">
+            <div class="showcard">
+        &copy; 2025 GA-8 Group
+           
+          <div class="infocard">
+            <p>⭐Vedant Ghumade (121B1B068)</p>
+            <p>⭐Sahil Dhumane (121B1B061)</p>
+            <p>⭐Raghavendra Kalkutaki (122B2B286)</p>
+            <p>⭐Kartik Donwade (121B1B062)</p>
+          </div>
+       </div>
+        </div>
+    </footer>
+    </div>
+</body>
+</html>

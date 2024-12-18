@@ -1,0 +1,174 @@
+{% extends "index.html" %}
+{% block content %}
+<div class="chart-container">
+    <div class="chart-item">
+        <canvas id="classLabelChart"></canvas>
+    </div>
+    <div class="chart-item">
+        <canvas id="vehicleTimeChart"></canvas>
+    </div>
+    <div class="chart-item">
+        <canvas id="roadOccupancyChart"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.27.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@0.1.1"></script>
+
+<script>
+    let classLabelChart, vehicleTimeChart, roadOccupancyChart;
+
+    // Fetch initial data from Flask
+    const data = {{ data | tojson }};
+    
+    const classLabels = {};
+    const timeData = {};
+    const roadOccupancy = {};
+
+    if (data && data.length > 0) {
+        data.forEach(row => {
+            const timestamp = new Date(row.Timestamp);
+            const classLabel = row['Class Name'];
+            const width = parseFloat(row.Width);
+            const height = parseFloat(row.Height);
+
+            // Class Label Counts
+            classLabels[classLabel] = (classLabels[classLabel] || 0) + 1;
+
+            // Time Data
+                        // Convert time strings to Date objects
+            // const timeKey = new Date();
+            // timeKey.setMinutes(timestamp.getMinutes());
+            // timeKey.setSeconds(timestamp.getSeconds());
+
+            // timeData[timeKey] = (timeData[timeKey] || 0) + 1;
+            ///////
+            const timeKey = `${String(timestamp.getMinutes()).padStart(2, '0')}:${String(timestamp.getSeconds()).padStart(2, '0')}`;
+
+            timeData[timeKey] = (timeData[timeKey] || 0) + 1;
+            ///////
+            // const timeKey = timestamp.toISOString(); // This will preserve the full date-time
+            // timeData[timeKey] = (timeData[timeKey] || 0) + 1;
+            
+            // const timeKey = `${timestamp.getHours()}:${String(timestamp.getMinutes()).padStart(2, '0')}`;
+            // Road Occupancy
+            const area = (width * height) / 10000; // Area in square centimeters (cm²)
+            roadOccupancy[classLabel] = (roadOccupancy[classLabel] || 0) + area;
+        });
+    }
+
+      classLabelChart = new Chart(document.getElementById('classLabelChart'), {
+            type: 'pie',
+            data: {
+                labels: Object.keys(classLabels),
+                datasets: [{
+                    data: Object.values(classLabels),
+                    backgroundColor: [
+                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+                        '#FF9F40', '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+                        '#9966FF', '#FF9F40'
+                    ]  // Add more colors if needed
+                }]
+            }
+        });
+
+        vehicleTimeChart = new Chart(document.getElementById('vehicleTimeChart'), {
+            type: 'line',
+            data: {
+                labels: Object.keys(timeData).sort(),  // Time labels (strings like '05:30', '06:00', etc.)
+                datasets: [{
+                    label: 'Number of Vehicles over a period of time',
+                    data: Object.values(timeData),
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderWidth: 1
+                }]
+            },
+                options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+//         vehicleTimeChart = new Chart(document.getElementById('vehicleTimeChart'), {
+//     type: 'line',
+//     data: {
+//         labels: ['05:30', '06:00', '06:30', '07:00', '07:30', '08:00'], // Provide an array of all the time labels
+//         datasets: [{
+//             label: 'Number of Vehicles over a period of time',
+//             data: [10, 15, 20, 25, 30, 35], // Provide the corresponding data points
+//             borderColor: 'rgba(54, 162, 235, 1)',
+//             backgroundColor: 'rgba(54, 162, 235, 0.2)',
+//             borderWidth: 1
+//         }]
+//     },
+//     options: {
+//         responsive: true,
+//         maintainAspectRatio: false
+//     }
+// });
+
+// function updateChartData() {
+//     // Generate new random data
+//     const newData = [
+//         Math.floor(Math.random() * 50),
+//         Math.floor(Math.random() * 50),
+//         Math.floor(Math.random() * 50),
+//         Math.floor(Math.random() * 50),
+//         Math.floor(Math.random() * 50),
+//         Math.floor(Math.random() * 50)
+//     ];
+
+//     // Update the chart data
+//     vehicleTimeChart.data.datasets[0].data = newData;
+
+//     // Rotate the labels to the left by one position
+//     vehicleTimeChart.data.labels.push(vehicleTimeChart.data.labels.shift());
+
+//     // Update the chart
+//     vehicleTimeChart.update();
+// }
+
+// // Update the chart data every 5 seconds
+// setInterval(updateChartData, 1000);
+
+
+    roadOccupancyChart = new Chart(document.getElementById('roadOccupancyChart'), {
+        type: 'bar',
+        data: {
+            labels: Object.keys(roadOccupancy),
+            datasets: [{ label: 'Road Occupancy by all Vehicles (cm²)', data: Object.values(roadOccupancy), backgroundColor: 'rgba(75, 192, 192, 0.2)', borderColor: 'rgba(75, 192, 192, 1)', borderWidth: 1 }]
+        }
+    });
+
+    // Periodic updates
+    setInterval(() => {
+        fetch('/get_chart_data')
+            .then(response => response.json())
+            .then(updatedData => {
+                updateCharts(updatedData);
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }, 5000);
+
+    function updateCharts(data) {
+        if (data) {
+            classLabelChart.data.datasets[0].data = data.classLabels.values;
+            classLabelChart.data.labels = data.classLabels.keys;
+            classLabelChart.update();
+
+            vehicleTimeChart.data.datasets[0].data = data.timeData.values;
+            vehicleTimeChart.data.labels = data.timeData.keys;
+            vehicleTimeChart.update();
+            
+            roadOccupancyChart.data.datasets[0].data = data.roadOccupancy.values;
+            roadOccupancyChart.data.labels = data.roadOccupancy.keys;
+            roadOccupancyChart.update();
+        }
+    }
+// vehicleTimeChart.data.labels.push(vehicleTimeChart.data.labels.shift());
+</script>
+
+{% endblock %}

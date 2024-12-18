@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Detection and Traffic Assessment</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        header {
+            background: linear-gradient(20deg, #0037ff, #00f7ff, #8400ff);
+            padding: 20px;
+            text-align: center;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .traffic-video {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .traffic-video img {
+            width: 100%;
+            max-width: 800px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h3 {
+            color: #0037ff;
+            font-size: 22px;
+            border-bottom: 2px solid #0037ff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .data-field {
+            background-color: #f1f1f1;
+            padding: 10px 15px;
+            border-radius: 5px;
+            display: inline-block;
+            width: auto;
+            font-weight: bold;
+            color: #333;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(20deg, #0037ff, #00f7ff, #8400ff);
+            color: white;
+            /* position: fixed; */
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+
+    <script>
+        // Function to update traffic data
+        function updateTrafficData() {
+            fetch('/traffic_data')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('vehicleCount').innerText = data.vehicle_count;
+                document.getElementById('avgSpeed').innerText = data.avg_speed.toFixed(2) + " km/h";
+                document.getElementById('trafficJam').innerText = data.is_traffic_jam ? "Yes" : "No";
+                document.getElementById('heavyVehicles').innerText = data.too_many_heavy_vehicles ? "Yes" : "No";
+                document.getElementById('clearanceTime').innerText = data.estimated_clearance_time.toFixed(2) + " s";
+                document.getElementById('trafficLight').innerText = data.traffic_light_decision[0] + " for " + data.traffic_light_decision[1] + " s";
+            });
+        }
+
+        // Refresh traffic data every 2 seconds
+        setInterval(updateTrafficData, 2000);
+    </script>
+</head>
+
+<body>
+
+    <header>
+        <h1>Traffic Analysis and Assessment</h1>
+    </header>
+
+    <div class="container">
+        <div class="traffic-video">
+            <h3>Traffic Video Stream</h3>
+            <img src="{{ url_for('video_feed') }}" alt="Live Traffic Stream">
+        </div>
+
+        <h3>Traffic Analysis</h3>
+        <p><strong>Vehicle Count:</strong> <span class="data-field" id="vehicleCount">Loading...</span></p>
+        <p><strong>Average Speed:</strong> <span class="data-field" id="avgSpeed">Loading...</span></p>
+        <p><strong>Traffic Jam Condition:</strong> <span class="data-field" id="trafficJam">Loading...</span></p>
+        <p><strong>Heavy Vehicles Present:</strong> <span class="data-field" id="heavyVehicles">Loading...</span></p>
+        <p><strong>Estimated Road Clearance Time:</strong> <span class="data-field" id="clearanceTime">Loading...</span></p>
+        <p><strong>Suggested Traffic Light:</strong> <span class="data-field" id="trafficLight">Loading...</span></p>
+    </div>
+
+    <footer>
+        &copy; 2024 GA-8 Group
+    </footer>
+
+</body>
+</html>
