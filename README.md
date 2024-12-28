@@ -1,4 +1,4 @@
-# 🚗 **Vehicle Detection and Traffic Assessment using YOLO11L** 🚦
+# **Vehicle Detection and Traffic Assessment using YOLO11L**
 
 This project is a **real-time vehicle detection and traffic assessment system** built on a self-trained **YOLO11L model**. The system integrates advanced features like **data logging**, **visualization**, and **traffic analysis** to provide actionable insights into traffic conditions.
 
