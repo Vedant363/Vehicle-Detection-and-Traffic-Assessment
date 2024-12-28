@@ -5,8 +5,6 @@ This project is a real-time vehicle detection and traffic assessment system buil
 ## Preview
 ![Photo 1](static/photo1.png)
 
-![Photo 2](static/photo2.png)
-
 ## Features
 
 ### Vehicle Detection
