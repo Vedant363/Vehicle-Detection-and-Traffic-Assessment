@@ -2,6 +2,11 @@
 
 This project is a real-time vehicle detection and traffic assessment system built on a self-trained YOLO11L model. The system integrates advanced features like data logging, visualization, and traffic analysis to provide actionable insights into traffic conditions.
 
+## Preview
+![Photo 1](static/photo1.png)
+
+![Photo 2](static/photo2.png)
+
 ## Features
 
 ### Vehicle Detection
@@ -118,4 +123,4 @@ This project is a real-time vehicle detection and traffic assessment system buil
 
 ## License
 
-This project is licensed under the CC0 1.0 Universal - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the CC0 1.0 Universal - see the [LICENSE](LICENSE.md) file for details.
