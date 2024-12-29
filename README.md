@@ -2,9 +2,9 @@
 
 This project is a **real-time vehicle detection and traffic assessment system** built on a self-trained **YOLO11L model**. The system integrates advanced features like **data logging**, **visualization**, and **traffic analysis** to provide actionable insights into traffic conditions.
 
-![Visitor Count](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FVedant363%2FVehicle-Detection-and-Traffic-Assessment&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=Visitors&edge_flat=false)
-![GitHub license](https://img.shields.io/github/license/Vedant363/Vehicle-Detection-and-Traffic-Assessment)
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/Vedant363/Vehicle-Detection-and-Traffic-Assessment)
+![Visitors](https://api.visitorbadge.io/api/visitors?path=Vedant363%2FVehicle-Detection-and-Traffic-Assessment&label=VISITORS&countColor=%23ff8c00)
+<!-- ![GitHub license](https://img.shields.io/github/license/Vedant363/Vehicle-Detection-and-Traffic-Assessment) -->
+<!-- ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/Vedant363/Vehicle-Detection-and-Traffic-Assessment) -->
 
 ---
 
