@@ -2,22 +2,24 @@
 
 This project is a **real-time vehicle detection and traffic assessment system** built on a self-trained **YOLO11L model**. The system integrates advanced features like **data logging**, **visualization**, and **traffic analysis** to provide actionable insights into traffic conditions.
 
-![Visitors](https://api.visitorbadge.io/api/visitors?path=Vedant363%2FVehicle-Detection-and-Traffic-Assessment&label=VISITORS&countColor=%23ff8c00)
-<!-- ![GitHub license](https://img.shields.io/github/license/Vedant363/Vehicle-Detection-and-Traffic-Assessment) -->
-<!-- ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/Vedant363/Vehicle-Detection-and-Traffic-Assessment) -->
+![License](https://img.shields.io/github/license/Vedant363/Vehicle-Detection-and-Traffic-Assessment?color=gold)
+![Last Commit](https://img.shields.io/github/last-commit/Vedant363/Vehicle-Detection-and-Traffic-Assessment?color=orange)
+![Build Status](https://img.shields.io/badge/build-passing-neongreen)
+![Visitors](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https://github.com/Vedant363/Vehicle-Detection-and-Traffic-Assessment&count_bg=red)
 
----
+
+
 
 ## 🖼️ **Preview**
 ![Photo 1](static/photo1.png)
 
----
+
 
 ## ✨ **Features**
 
 ### 🚘 **Vehicle Detection**
 - Detects multiple vehicle types in real-time using a **combination of the base YOLO11L model** (for pre-trained classes) and **custom-trained YOLO11L model** (for added custom classes).
-- Base YOLO11L model from [Ultralytics](https://www.ultralytics.com/).
+- Base YOLO11L model from [Ultralytics](https://docs.ultralytics.com/models/yolo11/).
 
 | **Model**    | **Size (pixels)** | **mAPval 50-95** | **Speed (CPU ONNX)** | **Speed (T4 TensorRT10)** | **Params (M)** | **FLOPs (B)** |
 |--------------|-------------------|------------------|-----------------------|---------------------------|----------------|---------------|
@@ -34,7 +36,7 @@ This project is a **real-time vehicle detection and traffic assessment system** 
   
   ![Results](model/results.png)
   
-- **Achieved performance metrics on testing data:**
+- **Achieved Performance Metrics on Testing Data:**
   - **mAP50-95:** 59.5%
   - **mAP50:** 66.2%
   - **mAP75:** 61.3%
@@ -50,7 +52,7 @@ This project is a **real-time vehicle detection and traffic assessment system** 
 | Scooter       | 0.908         | 0.809      | 0.936     | 0.875        |
 
 
----
+
 
 ### 📋 **Data Logging**
 - Logs detection data to **Google Sheets** for further analysis.
@@ -62,7 +64,7 @@ This project is a **real-time vehicle detection and traffic assessment system** 
   - **Confidence Score**
   - **Track ID**
 
----
+
 
 ### 📊 **Data Visualization**
 Provides real-time visual insights using **Chart.js**:
@@ -70,7 +72,7 @@ Provides real-time visual insights using **Chart.js**:
 2. **Line Chart**: Number of vehicles detected over time.
 3. **Bar Chart**: Vehicle classes with the most road occupancy, calculated by bounding box area.
 
----
+
 
 ### 🚦 **Traffic Insights**
 Real-time calculations based on detection data:
@@ -81,7 +83,7 @@ Real-time calculations based on detection data:
 - **Road Clearance Time**: Predicts the time required to clear the road.
 - **Traffic Light Suggestions**: Recommends optimal traffic light timings based on vehicle density and flow.
 
----
+
 
 ## 🔄 **Workflow**
 
@@ -105,7 +107,7 @@ Real-time calculations based on detection data:
    - Algorithms calculate traffic-related metrics and predictions.
    - Displays results on the web interface for user interpretation.
 
----
+
 
 ## 🛠️ **Technical Overview**
 
@@ -126,29 +128,31 @@ Real-time calculations based on detection data:
 - **GSpread**: Integrates with Google Sheets for data logging.
 - **Google Sheets API**: Facilitates real-time updates and data storage.
 
----
+
 
 ## 📤 **Example Outputs**
 
 ### **Detection Data Logged**
-| **Timestamp**       | **X1** | **Y1** | **X2** | **Y2** | **Width** | **Height** | **Class Name** | **Confidence** | **Track ID** |
-|----------------------|--------|--------|--------|--------|-----------|------------|----------------|----------------|--------------|
-| 2024-12-28 10:00 AM | 50     | 30     | 200    | 150    | 150       | 120        | Car            | 95%            | 1            |
+| **Timestamp**          | **X1**        | **Y1**       | **X2**        | **Y2**       | **Width**     | **Height**    | **Class Name** | **Confidence** | **Track ID** |
+|------------------------|---------------|--------------|---------------|--------------|---------------|---------------|----------------|----------------|--------------|
+| 21:49:05 1/1/2025      | 32.65145874   | 214.776062   | 124.6397705   | 275.8533325  | 91.98831177   | 61.07727051   | car            | 0.9123997688   | 1            |
+| 21:49:05 1/1/2025      | 388.3595581   | 102.7689667  | 420.4992065   | 138.6712799  | 32.13964844   | 35.90231323   | scooter        | 0.8495836258   | 2            |
+| 21:49:05 1/1/2025      | 62.71186829   | 150.5038757  | 96.41931152   | 185.9692078  | 33.70744324   | 35.46533203   | auto           | 0.8151150942   | 3            |
+| 21:49:05 1/1/2025      | 157.4563141   | 140.8128662  | 195.0846405   | 168.6981506  | 37.62832642   | 27.88528442   | car            | 0.7732740045   | 4            |
+| 21:49:05 1/1/2025      | 287.2844238   | 136.8283691  | 320.9523926   | 169.0031128  | 33.66796875   | 32.17474365   | car            | 0.7720789313   | 5            |
 
 ### **Visualization Charts**
-- **Pie Chart**: Displays the proportion of vehicle classes detected.
-- **Line Chart**: Shows the trend in the number of vehicles detected over time.
 - **Bar Chart**: Highlights vehicle classes with the most road occupancy based on their dimensions.
+  
+![Bar Chart](static/bar.png)
 
----
 
 ## 🚀 **Future Enhancements**
 
-- **Integration with Traffic Management Systems**: Expand the system for live traffic control.
+- **Integration with Traffic Management Systems**: Expand the system for live traffic control with live traffic stream from CCTVs and sensors.
 - **Custom Class Expansion**: Train the model with additional vehicle classes for broader detection.
-- **Cloud Deployment**: Host the application on scalable cloud platforms for wider accessibility.
 
----
+
 
 ## 📝 **License**
 This project is licensed under the **CC0 1.0 Universal**. See the [LICENSE](LICENSE.md) file for details.
