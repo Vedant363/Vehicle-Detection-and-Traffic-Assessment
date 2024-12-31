@@ -34,20 +34,15 @@ This project is a **real-time vehicle detection and traffic assessment system** 
   
   ![Results](model/results.png)
   
-- Achieved performance metrics on testing data:
+- **Achieved performance metrics on testing data:**
   - **mAP50-95:** 59.5%
   - **mAP50:** 66.2%
   - **mAP75:** 61.3%
 
-- **Class-Wise Metrics on Testing Data:**
+- **Class-Wise Performance Metrics on Testing Data:**
 
 | **Class**     | **Precision** | **Recall** | **mAP50** | **mAP50-95** |
 |---------------|---------------|------------|-----------|--------------|
-| Bicycle       | 0.802         | 0.844      | 0.883     | 0.804        |
-| Car           | 0.779         | 0.263      | 0.321     | 0.304        |
-| Motorcycle    | 0.964         | 0.787      | 0.818     | 0.785        |
-| Bus           | 0.214         | 0.526      | 0.234     | 0.194        |
-| Truck         | 0.645         | 0.654      | 0.654     | 0.570        |
 | JCB           | 0.907         | 0.754      | 0.878     | 0.771        |
 | Auto          | 0.913         | 0.766      | 0.909     | 0.807        |
 | Rickshaw      | 0.862         | 0.728      | 0.868     | 0.811        |
