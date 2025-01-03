@@ -38,7 +38,7 @@ global_sheet = None
 traffic_analysis_data = {}  # Initialize the global variable
 
 # Path to your service account key file
-SERVICE_ACCOUNT_FILE = 'credentials.json'
+SERVICE_ACCOUNT_FILE = 'gauth-credentials.json'
 
 # Define the scopes required for the Google Sheets API
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly', 'https://www.googleapis.com/auth/spreadsheets']
