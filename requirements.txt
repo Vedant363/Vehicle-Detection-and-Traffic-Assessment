@@ -19,3 +19,6 @@ pyngrok
 requests
 python-gnupg
 python-dotenv
+waitress
+dill
+lap
