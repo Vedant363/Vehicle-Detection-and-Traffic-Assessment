@@ -15,7 +15,7 @@ app = Flask(
 
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
-from models.decrypt import decrypt_file  
+from models.decryption import decrypt_file  
 decrypt_file()  
 
 from controllers.main_controller import main_bp

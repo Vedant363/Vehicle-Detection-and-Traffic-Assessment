@@ -11,7 +11,7 @@ This project is a **real-time vehicle detection and traffic assessment system** 
 
 
 ## 🖼️ **Preview**
-![Photo 1](static/photo1.png)
+![Photo 1](views/static/images/photo1.png)
 
 
 
@@ -34,7 +34,7 @@ This project is a **real-time vehicle detection and traffic assessment system** 
   
 - Results of training for the **Custom-trained YOLO11L model**:
   
-  ![Results](model/results.png)
+  ![Results](model_training/results.png)
   
 - **Achieved Performance Metrics on Testing Data:**
   - **mAP50-95:** 59.5%
@@ -144,7 +144,7 @@ Real-time calculations based on detection data:
 ### **Visualization Charts**
 - **Bar Chart**: Highlights vehicle classes with the most road occupancy based on their dimensions.
   
-![Bar Chart](static/bar.png)
+![Bar Chart](views/static/images/bar.png)
 
 
 ## 🚀 **Future Enhancements**

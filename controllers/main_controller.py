@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, session,
 from models.forms import LoginForm, URLForm
 from models.sheets import get_cached_data, initialize_google_sheets, global_sheet
 from models.youtube_stream import extract_video_id, is_valid_youtube_url, global_video_id
-from models.decrypt import check_decryption_status
+from models.decryption import check_decryption_status
 
 main_bp = Blueprint('main', __name__)
 
