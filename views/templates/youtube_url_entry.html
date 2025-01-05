@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Video Stream</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}"> 
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/youtube_url_entry.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="errmessage">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div>
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+        </div>
+
+        <h1>Enter URL of Traffic Video</h1>
+        
+        <form action="/submit" method="POST">
+            {{ form.hidden_tag() }}  
+            <div>
+                <label for="youtube_url"></label>
+                {{ form.youtube_url(class_='form-control', placeholder='Enter YouTube URL') }}
+            </div>
+            <div>
+                <button type="submit">{{ form.submit.label }}</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
