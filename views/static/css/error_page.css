@@ -1,0 +1,63 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #9d9d9d87;
+    color: #ff0019;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+.container {
+    text-align: center;
+    border: 1px solid #f5c6cb;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 4px 4px rgba(255, 0, 0, 0.6), 0px -4px 4px 4px rgba(255, 0, 0, 0.6);
+    animation: pulse 2s infinite;
+    position: relative;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0px 4px 4px 4px rgba(255, 0, 0, 0.6), 0px -4px 4px 4px rgba(255, 0, 0, 0.6);
+    }
+    50% {
+        box-shadow: 0px 8px 8px 8px rgba(255, 0, 0, 0.6), 0px -8px 8px 8px rgba(255, 0, 0, 0.6);
+    }
+    100% {
+        box-shadow: 0px 4px 4px 4px rgba(255, 0, 0, 0.6), 0px -4px 4px 4px rgba(255, 0, 0, 0.6);
+    }
+}
+
+.cross-mark {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+    display: block;
+    border: 10px solid #ff0019;
+    border-radius: 50%;
+}
+h1 {
+    font-size: 2.5em;
+    margin-bottom: 15px;
+}
+p {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 1em;
+    color: #ffffff;
+    background-color: #ff0000;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+.btn:hover {
+    background-color: #660705;
+}
