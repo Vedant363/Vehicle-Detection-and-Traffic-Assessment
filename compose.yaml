@@ -1,0 +1,9 @@
+services:
+  server:
+    build:
+      context: .
+    ports:
+      - "8087:8087"
+    volumes:
+      - ./.env:/app/.env:ro
+      - ./gauth-credentials.json:/app/gauth-credentials.json:ro
