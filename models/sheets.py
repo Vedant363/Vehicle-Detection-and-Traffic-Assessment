@@ -9,16 +9,20 @@ cache = {
 }
 CACHE_DURATION = 30
 SPREADSHEET_ID = os.getenv('SPREADSHEET_ID')
-
 from models.state import DecryptionStatus
-if os.path.exists('credentials.json'):
-    SERVICE_ACCOUNT_FILE = 'credentials.json'
-elif os.path.exists('gauth-credentials.json'):
-    SERVICE_ACCOUNT_FILE = 'gauth-credentials.json'
-    DecryptionStatus.set_decryption_status(True)
-else:
-    print("Error: No credentials file found")
-    exit(1)
+
+SERVICE_ACCOUNT_FILE = None
+
+def get_service_account_file():
+    global SERVICE_ACCOUNT_FILE
+    if os.path.exists('credentials.json'):
+        SERVICE_ACCOUNT_FILE =  'credentials.json'
+    elif os.path.exists('gauth-credentials.json'):
+        DecryptionStatus.set_decryption_status(True)
+        SERVICE_ACCOUNT_FILE = 'gauth-credentials.json'
+    else:
+        print("Error: No credentials file found")
+        exit(1)
 
 SCOPES = [
     'https://www.googleapis.com/auth/spreadsheets.readonly',
