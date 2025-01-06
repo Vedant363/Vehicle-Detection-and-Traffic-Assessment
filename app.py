@@ -18,6 +18,9 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 from models.decryption import decrypt_file  
 decrypt_file()  
 
+from models.sheets import get_service_account_file
+SERVICE_ACCOUNT_FILE = get_service_account_file()
+
 from controllers.main_controller import main_bp
 from controllers.video_controller import video_bp
 
