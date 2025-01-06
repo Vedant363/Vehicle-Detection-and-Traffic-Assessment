@@ -6,7 +6,6 @@ video_bp = Blueprint('video', __name__)
 @video_bp.route('/toggle_video', methods=['POST'])
 def toggle_video():
     try:
-        print("toggle_video -------------------------------")
         from models.state import VideoState
         VideoState.set_show_video(not VideoState.get_show_video())
         return jsonify({"show_video": VideoState.get_show_video(), "message": "Video visibility toggled."})
@@ -16,7 +15,6 @@ def toggle_video():
 @video_bp.route('/video_feed')
 def video_feed():
     try:
-        print("Video feed -------------------------------")
         return Response(
             generate_frames(),
             mimetype='multipart/x-mixed-replace; boundary=frame'
