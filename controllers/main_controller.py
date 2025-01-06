@@ -19,10 +19,10 @@ def login():
             password = form.password.data
             # Dummy login
             if username == "test" and password == "test123":
-                flash('Login successful!', 'success')
+                flash('✅ Login successful!', 'success')
                 return redirect(url_for('main.passfunc'))
             else:
-                flash('Invalid username or password', 'danger')
+                flash('❌ Invalid username or password', 'danger')
                 form.username.data = ''
                 form.password.data = ''
         return render_template('login_form.html', form=form)
@@ -54,11 +54,11 @@ def submit():
                 global_video_id = video_id
                 return redirect(url_for('main.dashboard'))
             else:
-                flash("Invalid YouTube URL", "danger")
+                flash("❌ Invalid YouTube URL", "danger")
                 return redirect(url_for('main.home'))
         else:
-            flash("Invalid YouTube URL!!", "danger")
-            flash("Use default URL or Enter valid URL", "suggestion")
+            flash("❌ Invalid YouTube URL!!", "danger")
+            flash("💡 Use default URL or Enter valid URL", "suggestion")
             return redirect(url_for('main.home'))
     except Exception as e:
         return render_template('error_page.html', message=str(e) + " From: /submit"), 500
