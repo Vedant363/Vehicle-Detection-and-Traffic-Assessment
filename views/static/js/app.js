@@ -6,6 +6,7 @@ import { createOverlay, toggleChartItemScale, setupOverlayClick } from './chartI
 import { startTrafficLightCycle } from './trafficLight.js';  
 import { checkVideoFeed } from './videoFeed.js';  
 import { setupEyeButton } from './videoToggle.js'; 
+import { stopExecution } from './stopExecution.js';
 
 startTrafficLightCycle();
 
@@ -16,6 +17,8 @@ setupThemeToggle();
 setupFullscreenListener();
 
 startDateTimeUpdates();
+
+stopExecution();
 
 // Chart interactions (overlay, chart scaling)
 // const chartContainer = document.querySelector('.container');

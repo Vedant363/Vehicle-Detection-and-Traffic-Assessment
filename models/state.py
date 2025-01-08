@@ -21,3 +21,14 @@ class DecryptionStatus:
     def set_decryption_status(cls, value):
         """Set the decryption status"""
         cls._decryption_ok = value
+
+class StopExecution:
+    _stop_execution = False
+
+    @classmethod
+    def get_stop_execution_status(cls):
+        return cls._stop_execution
+   
+    @classmethod
+    def set_stop_execution_status(cls, value):
+        cls._stop_execution = value

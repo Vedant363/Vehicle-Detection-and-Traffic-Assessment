@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, session, request
+from flask import Blueprint, render_template, redirect, url_for, flash, session, request, after_this_request
 from models.forms import LoginForm, URLForm
 from models.sheets import get_cached_data, initialize_google_sheets, global_sheet
 from models.youtube_stream import extract_video_id, is_valid_youtube_url, global_video_id
@@ -120,3 +120,21 @@ def get_chart_data():
         }
     except Exception as e:
         return render_template('error_page.html', message=str(e) + " From: /get_chart_data"), 500
+
+@main_bp.route('/stop', methods=['GET','POST'])
+def stop_execution():
+    try:
+        from models.state import StopExecution
+        StopExecution.set_stop_execution_status(True)
+        return render_template('final_page.html'), 200
+    except Exception as e:
+        return render_template('error_page.html', message=str(e) + " From: /stop"), 500
+    
+@main_bp.route('/complete_stop', methods=['GET','POST'])
+def call_complete_stop():
+    try:
+        from models.tracking import complete_stop
+        complete_stop()
+        return "Ok", 200
+    except Exception as e:
+        return render_template('error_page.html', message=str(e) + " From: /complete_stop"), 500

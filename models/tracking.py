@@ -2,14 +2,23 @@ import cv2
 import numpy as np
 import torch
 from ultralytics import YOLO
+import signal
 
 # For analyzing traffic
 traffic_analysis_data = {}
 
 def get_show_video():
-    from models.state import VideoState  # Late import to avoid circular dependency
+    from models.state import VideoState  
     return VideoState.get_show_video()
 
+def stop_execution():
+    from models.state import StopExecution  
+    return StopExecution.get_stop_execution_status()
+
+def complete_stop():
+    from models.state import StopExecution
+    StopExecution.set_stop_execution_status(True)
+    signal.raise_signal(signal.SIGINT)
 
 def box_iou(box1, box2):
     from shapely.geometry import box as shapely_box
@@ -125,7 +134,7 @@ def log_to_google_sheets(timestamp, x1, y1, x2, y2, class_name, confidence, trac
     row = [timestamp, x1, y1, x2, y2, width, height, class_name, confidence, track_id]
     stored_rows.append(row)
 
-    if len(stored_rows) >= 10:
+    if len(stored_rows) >= 15:
         global_sheet.append_rows(stored_rows)
         stored_rows.clear()
 
@@ -157,15 +166,13 @@ def generate_frames():
     traffic_analyzer = TrafficAnalyzer(road_area)
 
     while cap.isOpened():
-        if device == 'cuda':
-            ret, frame = cap.read()
-            if not ret:
-                break
-        else:
-            ret, frame = cap.read()
-            frame_count += 1
-            if not ret or frame_count % frame_skip != 0:
-                continue
+        ret, frame = cap.read()
+        frame_count += 1
+        if not ret or frame_count % frame_skip != 0:
+            continue
+
+        if stop_execution():
+            break
 
         results1 = model1.track(frame, classes=[1, 2, 3, 5, 7], conf=0.05, iou=0.9, persist=True, device=device)
         results2 = model2.track(frame, classes=[80, 81, 82, 83, 84], iou=0.9, persist=True, device=device)
@@ -223,3 +230,5 @@ def generate_frames():
             frame +
             b'\r\n'
         )
+
+    cap.release()
