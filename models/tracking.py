@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import torch
 from ultralytics import YOLO
 
 # For analyzing traffic
@@ -107,21 +108,34 @@ class TrafficAnalyzer:
 def log_to_google_sheets(timestamp, x1, y1, x2, y2, class_name, confidence, track_id):
     from models.sheets import global_sheet, initialize_google_sheets
 
+    global stored_rows
+    if 'stored_rows' not in globals():
+        stored_rows = []
+
     if global_sheet is None:
         global_sheet = initialize_google_sheets('vehicle-detection')
+
     if not global_sheet.row_values(1):
         headers = ['Timestamp', 'X1', 'Y1', 'X2', 'Y2', 'Width', 'Height', 'Class Name', 'Confidence', 'Track ID']
         global_sheet.insert_row(headers, 1)
 
     width = x2 - x1
     height = y2 - y1
+    
     row = [timestamp, x1, y1, x2, y2, width, height, class_name, confidence, track_id]
-    global_sheet.append_row(row)
+    stored_rows.append(row)
+
+    if len(stored_rows) >= 10:
+        global_sheet.append_rows(stored_rows)
+        stored_rows.clear()
 
 logged_tracks = set()
 
 def generate_frames():
     global traffic_analysis_data, logged_tracks
+
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    print(f"Using device: {device}")
 
     model1 = YOLO('yolo11l.pt')
     model2 = YOLO('best.pt')
@@ -143,13 +157,18 @@ def generate_frames():
     traffic_analyzer = TrafficAnalyzer(road_area)
 
     while cap.isOpened():
-        ret, frame = cap.read()
-        frame_count += 1
-        if not ret or frame_count % frame_skip != 0:
-            continue
+        if device == 'cuda':
+            ret, frame = cap.read()
+            if not ret:
+                break
+        else:
+            ret, frame = cap.read()
+            frame_count += 1
+            if not ret or frame_count % frame_skip != 0:
+                continue
 
-        results1 = model1.track(frame, classes=[1, 2, 3, 5, 7], conf=0.05, iou=0.9, persist=True)
-        results2 = model2.track(frame, classes=[80, 81, 82, 83, 84], iou=0.9, persist=True)
+        results1 = model1.track(frame, classes=[1, 2, 3, 5, 7], conf=0.05, iou=0.9, persist=True, device=device)
+        results2 = model2.track(frame, classes=[80, 81, 82, 83, 84], iou=0.9, persist=True, device=device)
 
         combined_boxes = []
         for i, results in enumerate([results1, results2]):
