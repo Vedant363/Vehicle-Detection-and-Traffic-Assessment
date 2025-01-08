@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, session, request, after_this_request
+from flask import Blueprint, jsonify, render_template, redirect, url_for, flash, session, request, after_this_request
 from models.forms import LoginForm, URLForm
 from models.sheets import get_cached_data, initialize_google_sheets, global_sheet
 from models.youtube_stream import extract_video_id, is_valid_youtube_url, global_video_id
@@ -136,7 +136,10 @@ def stop_execution():
         from models.sheets import fetch_data_from_sheets
         data1 = fetch_data_from_sheets()
 
-        return render_template('dashboard2.html', data=rows, data1=data1)
+        if len(data1) > 2:
+            return render_template('dashboard2.html', data=rows, data1=data1)
+        else:
+            return render_template('error_page.html', message='No detections were made'), 500
     except Exception as e:
         return render_template('error_page.html', message=str(e) + " From: /final_page"), 500
     
@@ -145,6 +148,6 @@ def call_complete_stop():
     try:
         from models.tracking import complete_stop
         complete_stop()
-        return "Ok", 200
+        return jsonify(message="Execution stopped successfully. You can close this page now!!"), 200
     except Exception as e:
         return render_template('error_page.html', message=str(e) + " From: /complete_stop"), 500

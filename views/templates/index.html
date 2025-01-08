@@ -24,6 +24,10 @@
               <div class="light1 green"></div>
             </div>
         </div>
+        <div class="overlay" id="overlay"></div>
+        <div class="popup" id="popup">
+        <h2>Press 'F' for Full Screen and Press 'Q' for Exit</h2>
+    </div>
     <header>
       <div class="head">
             <div class="datedisplay">
@@ -121,6 +125,20 @@
     </div>
     <script>
         const toggleVideoUrl = "{{ url_for('video.toggle_video') }}"; // Set the URL as a global variable
+        window.onload = function() {
+            const popup = document.getElementById('popup');
+            const overlay = document.getElementById('overlay');
+
+            // Show the popup and overlay
+            popup.classList.add('show');
+            overlay.classList.add('show');
+
+            // Remove popup and overlay after 5 seconds
+            setTimeout(() => {
+                popup.classList.remove('show');
+                overlay.classList.remove('show');
+            }, 8000);
+        };
     </script>
     
     <!-- External JS module file -->

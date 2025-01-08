@@ -14,10 +14,11 @@
       padding: 0;
       box-sizing: border-box;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background-color: white;
+      background: linear-gradient(135deg, #000000, #000000);
     }
 
     .main-container {
@@ -45,7 +46,7 @@
         flex: 1.5; 
         background-color: #f0f0f0;
         margin: 5px;
-        overflow-y: scroll; 
+        overflow-y: auto; 
         
     }
 
@@ -63,7 +64,7 @@
       flex: 3; 
       background-color: #d0d0d0;
       margin: 5px;
-      overflow-y: scroll; 
+      overflow-y: auto; 
       scrollbar-color: transparent transparent; 
       display: flex;
       justify-content: flex-start;
@@ -162,16 +163,24 @@
         background-color: yellow !important; 
     }
 
-
+    .title {
+      font-size: 2rem;
+      font-weight: bold;
+      color: rgb(255, 255, 255);
+      /* text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.6); */
+      margin-bottom: 10px;
+      margin-top: 10px;
+      text-align: center;
+    }
 
   </style>
 </head>
 <body>
+  <div class="title">Captured Vehicle Detections and Traffic Insights - <span id="current-date"></span></div>
   <div class="main-container">
     <div class="container-1">
         {% block content %}{% endblock %}
-    </div>
-  </div>
+
   <script>
     window.addEventListener('load', function() {
         setTimeout(() => {
@@ -202,6 +211,19 @@
     }
 
     window.onload = assignRandomRowColors;
+
+    // Get the current date
+    const currentDate = new Date();
+
+    // Format the date (e.g., "January 9, 2025")
+    const formattedDate = currentDate.toLocaleDateString('en-US', {
+      year: 'numeric',    // Full year (e.g., 2025)
+      month: 'long',      // Full month name (e.g., January)
+      day: 'numeric',     // Day of the month
+    });
+
+    // Insert the formatted date into the span with the ID 'current-date'
+    document.getElementById('current-date').textContent = formattedDate;
 </script>
 </body>
 </html>

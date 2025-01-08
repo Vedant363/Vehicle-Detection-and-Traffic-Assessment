@@ -12,25 +12,26 @@
     </div>
 </div>
     {% include "charts.html" %}
-  </div>
-  <div class="container-2">
-    <table>
-        <thead>
-            <tr>
-                {% for key in data1[0].keys() %}
-                    <th>{{ key }}</th>
-                {% endfor %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in data1 %}
-                <tr>
-                    {% for value in row.values() %}
-                        <td>{{ value }}</td>
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+</div>
+<div class="container-2">
+  <table>
+      <thead>
+          <tr>
+              {% for key in data1[0].keys() %}
+                  <th>{{ key }}</th>
+              {% endfor %}
+          </tr>
+      </thead>
+      <tbody>
+          {% for row in data1 %}
+              <tr>
+                  {% for value in row.values() %}
+                      <td>{{ value }}</td>
+                  {% endfor %}
+              </tr>
+          {% endfor %}
+      </tbody>
+  </table>
+</div>
 </div>
 {% endblock %}

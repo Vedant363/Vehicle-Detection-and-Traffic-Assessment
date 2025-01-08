@@ -1086,8 +1086,8 @@ width: 100%;
 height: 100%;
 position: fixed;
 background: rgba(255, 255, 255, 0.4);
-backdrop-filter: blur(10px);
--webkit-backdrop-filter: blur(10px);
+backdrop-filter: blur(30px);
+-webkit-backdrop-filter: blur(30px);
 z-index: 9999;
 }
 
@@ -1171,4 +1171,48 @@ color: green;
 
 .tooltip-container:hover .tooltip-text, .tooltip-container:hover .tooltip-text1, .tooltip-container:hover .tooltip-text2 {
     visibility: visible; /* Show the tooltip on hover */
+}
+
+
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent background for glass effect */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    border-radius: 8px;
+    z-index: 1000;
+    display: none;
+    animation: fadeOut 1s ease-out 8s forwards; /* Fade out after 4 seconds */
+    backdrop-filter: blur(10px); /* Blur effect for glass effect */
+}
+
+.popup.show {
+    display: block;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+}
+
+.overlay.show {
+    display: block;
 }
