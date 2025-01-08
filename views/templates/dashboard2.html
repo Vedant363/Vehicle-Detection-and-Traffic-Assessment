@@ -1,0 +1,36 @@
+{% extends "final_page.html" %}
+{% block content %}
+<div class="chart-container">
+    <div class="chart-item">
+        <canvas id="vehicleTimeChart"></canvas>
+    </div>
+    <div class="chart-item">
+        <canvas id="roadOccupancyChart"></canvas>
+    </div>
+    <div class="chart-item1">
+        <canvas id="classLabelChart"></canvas>
+    </div>
+</div>
+    {% include "charts.html" %}
+  </div>
+  <div class="container-2">
+    <table>
+        <thead>
+            <tr>
+                {% for key in data1[0].keys() %}
+                    <th>{{ key }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in data1 %}
+                <tr>
+                    {% for value in row.values() %}
+                        <td>{{ value }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,87 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thank You</title>
-    <style>
-        body {
-            font-family: 'Comic Sans MS', cursive, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            transition: background-color 1s ease;
-        }
-        .container {
-            text-align: center;
-            background: linear-gradient(135deg, #ffffff 0%, #dcdcdc 100%);
-            padding: 50px;
-            border-radius: 20px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            animation: fadeIn 2s ease-in-out;
-        }
-        h1 {
-            color: #ffffff;
-            font-size: 3em;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-            animation: textGlow 1.5s infinite alternate;
-        }
-        p {
-            color: #ffffff;
-            font-size: 1.2em;
-            margin: 20px 0;
-        }
-        .button {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 15px 30px;
-            font-size: 1em;
-            color: #ffffff;
-            background-color: #ff6f61;
-            border: none;
-            border-radius: 50px;
-            text-decoration: none;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-        }
-        .button:hover {
-            background-color: #ff0d00;
-            transform: scale(1.1);
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        @keyframes textGlow {
-            from { text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3), 0 0 10px #a7a7a7, 0 0 20px #c7c7c7, 0 0 30px #b9b9b9; }
-            to { text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3), 0 0 20px #6d6d6d, 0 0 30px #7c7c7c, 0 0 40px #6b6b6b; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytical Data</title>
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/apple-touch-icon.png') }}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.png') }}">
+  <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.png') }}">
+  <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}"> 
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: white;
+    }
+
+    .main-container {
+      background: linear-gradient(270deg, #ff0000, #ff7f00, #00ffdd, #00ff00, #e600ff, #ff0088, #8b00ff);
+      background-size: 1400% 1400%;
+      animation: gradientAnimation 15s ease infinite;
+      width: 90vw;
+      height: 90vh;
+      margin: 10px;
+      padding: 10px;
+      display: flex;
+      border: 1px solid transparent;
+      border-radius: 15px;
+      gap: 5px; 
+      overflow: hidden;
+    }
+
+    @keyframes gradientAnimation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .container-1 {
+        flex: 1.5; 
+        background-color: #f0f0f0;
+        margin: 5px;
+        overflow-y: scroll; 
+        
+    }
+
+    
+    .container-1::-webkit-scrollbar {
+        display: none;
+    }
+
+    .container-1::-webkit-scrollbar-thumb {
+        display: none;
+    }
+
+
+    .container-2 {
+      flex: 3; 
+      background-color: #d0d0d0;
+      margin: 5px;
+      overflow-y: scroll; 
+      scrollbar-color: transparent transparent; 
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-start;
+    }
+
+    .container-2::-webkit-scrollbar {
+        display: none;
+    }
+
+    .container-2::-webkit-scrollbar-thumb {
+        display: none;
+    }
+
+    .container-2::-webkit-scrollbar-track {
+        display: none;
+    }
+
+    .chart-container {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        width: 100%; 
+        align-items: center;
+        padding: 5px;
+    }
+
+    .chart-item1{
+        width: 400px;
+        height: 400px;
+        background: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+        padding: 10px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease; 
+        cursor: pointer;
+        color: black;
+    }
+
+    .chart-item{
+        width: 400px;
+        height: 200px;
+        background: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 0 8px rgba(0, 13, 254, 0.574);
+        padding: 10px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+        color: black;
+    }
+    table {
+    border-collapse: collapse;
+    width: 100%; 
+    max-width: 100%; 
+    margin: 0; 
+    font-family: 'Arial', sans-serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 12px 15px;
+        text-align: left;
+    }
+
+    th {
+        background-color: #007BFF;
+        color: #ffffff;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f8f9fa;
+    }
+
+    tr:hover {
+        background-color: #eaff00;
+        color: black;
+        font-size: medium;
+        transition: background-color 0.1s ease, color 0.1s ease;
+        z-index: 10;
+    }
+
+    tr {
+        transition: background-color 0.3s ease;
+    }
+
+    table tr:hover {
+        background-color: yellow !important; 
+    }
+
+
+
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Thank You!</h1>
-        <a href="/" class="button">Go Back to Home</a>
+  <div class="main-container">
+    <div class="container-1">
+        {% block content %}{% endblock %}
     </div>
-    <script>
-        // Function to generate a random RGB color
-        function getRandomColor() {
-            const r = Math.floor(Math.random() * 256);
-            const g = Math.floor(Math.random() * 256);
-            const b = Math.floor(Math.random() * 256);
-            return `rgb(${r}, ${g}, ${b})`;
-        }
+  </div>
+  <script>
+    window.addEventListener('load', function() {
+        setTimeout(() => {
+            fetch('/complete_stop', {
+                method: 'GET',
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }, 2000);  
+    });
 
-        // Function to change the background color every second
-        function changeBackgroundColor() {
-            setInterval(() => {
-                document.body.style.backgroundColor = getRandomColor();
-            }, 1000); // Change every 1000ms (1 second)
-        }
+    function getRandomExtremelyLightColor() {
+    const r = Math.floor(Math.random() * 50 + 200); 
+    const g = Math.floor(Math.random() * 50 + 200);
+    const b = Math.floor(Math.random() * 50 + 200);
+    return `rgb(${r}, ${g}, ${b})`;
+    }
 
-        // Start the background color change loop
-        changeBackgroundColor();
-    </script>
+    function assignRandomRowColors() {
+        const rows = document.querySelectorAll('table tr'); 
+
+        rows.forEach((row, index) => {
+            if (index !== 0) { 
+                row.style.backgroundColor = getRandomExtremelyLightColor();
+            }
+        });
+    }
+
+    window.onload = assignRandomRowColors;
+</script>
 </body>
 </html>

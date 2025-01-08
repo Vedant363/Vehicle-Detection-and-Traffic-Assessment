@@ -39,7 +39,8 @@ def fetch_data_from_sheets():
     if global_sheet is None:
         global_sheet = initialize_google_sheets('vehicle-detection') 
     
-    rows = global_sheet.get_all_records(head=1)  
+    rows = global_sheet.get_all_records()  
+    return rows
 
 def get_cached_data():
     global cache, global_sheet

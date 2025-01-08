@@ -121,14 +121,24 @@ def get_chart_data():
     except Exception as e:
         return render_template('error_page.html', message=str(e) + " From: /get_chart_data"), 500
 
-@main_bp.route('/stop', methods=['GET','POST'])
+@main_bp.route('/final_page', methods=['GET','POST'])
 def stop_execution():
     try:
         from models.state import StopExecution
         StopExecution.set_stop_execution_status(True)
-        return render_template('final_page.html'), 200
+        global global_sheet
+        if global_sheet is None:
+            global_sheet = initialize_google_sheets('vehicle-detection')
+        rows = get_cached_data()
+        if not rows:
+            rows = []
+        
+        from models.sheets import fetch_data_from_sheets
+        data1 = fetch_data_from_sheets()
+
+        return render_template('dashboard2.html', data=rows, data1=data1)
     except Exception as e:
-        return render_template('error_page.html', message=str(e) + " From: /stop"), 500
+        return render_template('error_page.html', message=str(e) + " From: /final_page"), 500
     
 @main_bp.route('/complete_stop', methods=['GET','POST'])
 def call_complete_stop():
