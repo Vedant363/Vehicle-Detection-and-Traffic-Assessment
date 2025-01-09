@@ -202,6 +202,8 @@ def call_complete_stop():
     try:
         from models.tracking import complete_stop
         session.clear()
+        from models.sheets import clear_google_sheets_data
+        clear_google_sheets_data('vehicle-detection', 'Sheet1')
         complete_stop()
         return jsonify(message="Execution stopped successfully. You can close this page now!!"), 200
     except Exception as e:
