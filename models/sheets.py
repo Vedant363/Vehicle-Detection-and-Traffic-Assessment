@@ -1,4 +1,5 @@
 import time
+import datetime
 import gspread
 import os
 import csv
@@ -45,7 +46,9 @@ def fetch_data_from_sheets():
     return rows
 
 def write_to_csv(data):
-    temp_csv_path = os.path.join(current_app.root_path, 'temp', 'data.csv')
+    current_time = datetime.datetime.now()
+    full_time_string = current_time.strftime("%Y_%m_%d_%H_%M_%S")
+    temp_csv_path = os.path.join(current_app.root_path, 'temp', f'data_{full_time_string}.csv')
     
     os.makedirs(os.path.dirname(temp_csv_path), exist_ok=True)
     
