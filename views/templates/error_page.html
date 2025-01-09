@@ -21,16 +21,5 @@
         <p>{{ message }}</p>
         <a href="/complete_stop" class="btn">Quit</a>
     </div>
-    <script>
-        function goBack() {
-            if (document.referrer) {
-                // If there's a referrer (previous page), go back to it
-                window.history.back();
-            } else {
-                // Otherwise, navigate to the homepage or a default page
-                window.location.href = '/';  // You can change this URL to another fallback page if needed
-            }
-        }
-    </script>
 </body>
 </html>
