@@ -1,6 +1,8 @@
 import time
 import gspread
 import os
+import csv
+from flask import current_app
 
 global_sheet = None
 cache = {
@@ -41,6 +43,24 @@ def fetch_data_from_sheets():
     
     rows = global_sheet.get_all_records()  
     return rows
+
+def write_to_csv(data):
+    temp_csv_path = os.path.join(current_app.root_path, 'temp', 'data.csv')
+    
+    os.makedirs(os.path.dirname(temp_csv_path), exist_ok=True)
+    
+    with open(temp_csv_path, mode='w', newline='', encoding='utf-8') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=data[0].keys())
+        writer.writeheader()
+        writer.writerows(data)
+    
+    return temp_csv_path  
+
+def clear_google_sheets_data(sheet_name, worksheet_name):
+    gc = gspread.service_account(filename=SERVICE_ACCOUNT_FILE)
+    sheet = gc.open(sheet_name)
+    worksheet = sheet.worksheet(worksheet_name)
+    worksheet.clear()
 
 def get_cached_data():
     global cache, global_sheet

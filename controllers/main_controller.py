@@ -1,8 +1,25 @@
-from flask import Blueprint, jsonify, render_template, redirect, url_for, flash, session, request, after_this_request
+from functools import wraps
+from flask import Blueprint, jsonify, render_template, redirect, url_for, flash, session, request, send_file
 from models.forms import LoginForm, URLForm
 from models.sheets import get_cached_data, initialize_google_sheets, global_sheet
 from models.youtube_stream import extract_video_id, is_valid_youtube_url, global_video_id
 from models.decryption import check_decryption_status
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'logged_in' not in session:
+            return redirect(url_for('main.login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+def url_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'url_entered' not in session:
+            return redirect(url_for('main.passfunc'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 main_bp = Blueprint('main', __name__)
 
@@ -20,6 +37,7 @@ def login():
             # Dummy login
             if username == "test" and password == "test123":
                 flash('✅ Login successful!', 'success')
+                session['logged_in'] = True
                 return redirect(url_for('main.passfunc'))
             else:
                 flash('❌ Invalid username or password', 'danger')
@@ -30,19 +48,24 @@ def login():
         return render_template('error_page.html', message=str(e) + " From: /login"), 500
     
 @main_bp.route('/e')
+@login_required
 def passfunc():
-    session.clear()
+    session.pop('_flashes', None)
     return redirect(url_for('main.home'))
 
 @main_bp.route('/enterrurl')
+@login_required
 def home():
     try:
       form = URLForm()
+      session['url_entered'] = True
       return render_template('youtube_url_entry.html', form=form)
     except Exception as e:
         return render_template('error_page.html', message=str(e) + " From: /enterurl"), 500
 
 @main_bp.route('/submit', methods=['GET', 'POST'])
+@login_required
+@url_required
 def submit():
     try:
         form = URLForm()
@@ -64,6 +87,8 @@ def submit():
         return render_template('error_page.html', message=str(e) + " From: /submit"), 500
 
 @main_bp.route('/index')
+@login_required
+@url_required
 def dashboard():
     try:
         global global_sheet
@@ -78,6 +103,8 @@ def dashboard():
         return render_template('error_page.html', message=str(e) + " From: /index"), 500
 
 @main_bp.route('/traffic_data')
+@login_required
+@url_required
 def traffic_data():
     try:
         from models.tracking import traffic_analysis_data
@@ -94,6 +121,8 @@ def traffic_data():
         return render_template('error_page.html', message=str(e) + " From: /traffic_data"), 500
 
 @main_bp.route('/get_chart_data')
+@login_required
+@url_required
 def get_chart_data():
     try:
         rows = get_cached_data()
@@ -120,8 +149,12 @@ def get_chart_data():
         }
     except Exception as e:
         return render_template('error_page.html', message=str(e) + " From: /get_chart_data"), 500
+    
+data1 = None
 
 @main_bp.route('/final_page', methods=['GET','POST'])
+@login_required
+@url_required
 def stop_execution():
     try:
         from models.state import StopExecution
@@ -134,6 +167,7 @@ def stop_execution():
             rows = []
         
         from models.sheets import fetch_data_from_sheets
+        global data1
         data1 = fetch_data_from_sheets()
 
         if len(data1) > 2:
@@ -141,13 +175,49 @@ def stop_execution():
         else:
             return render_template('error_page.html', message='No detections were made'), 500
     except Exception as e:
-        return render_template('error_page.html', message=str(e) + " From: /final_page"), 500
+        return render_template('error_page.html', message=str(e) + " From: /final_page"), 50
+
+@main_bp.route('/download_csv', methods=['GET'])
+@login_required
+@url_required
+def download_csv():
+    try:
+        from models.sheets import write_to_csv
+        
+        # print("Data1: ", data1)
+        global data1
+        if data1:
+            csv_file_path = write_to_csv(data1)
+            data1 = None
+            from models.sheets import clear_google_sheets_data
+            clear_google_sheets_data('vehicle-detection', 'Sheet1')
+
+        # Send the file for download
+        return send_file(csv_file_path, as_attachment=True, download_name='data.csv'), 200
+    except Exception as e:
+        return render_template('error_page.html', message=f"Error generating CSV: {str(e)}"), 500
     
 @main_bp.route('/complete_stop', methods=['GET','POST'])
+@login_required
+@url_required
 def call_complete_stop():
     try:
         from models.tracking import complete_stop
+        session.clear()
         complete_stop()
         return jsonify(message="Execution stopped successfully. You can close this page now!!"), 200
     except Exception as e:
         return render_template('error_page.html', message=str(e) + " From: /complete_stop"), 500
+    
+@main_bp.route('/hi')
+@login_required
+def hi():
+    return jsonify(message="hahahehe"), 200
+
+@main_bp.route('/logout', methods=['GET', 'POST'])
+@login_required
+def logout():
+    # print("from /logout")
+    session.clear()
+    flash('☑️ You have been logged out!', 'success')
+    return redirect(url_for('main.login'))

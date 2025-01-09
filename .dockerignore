@@ -7,6 +7,7 @@
 **/.DS_Store
 **/__pycache__
 **/.venv
+**/.temp
 **/.env
 **/.classpath
 **/.dockerignore

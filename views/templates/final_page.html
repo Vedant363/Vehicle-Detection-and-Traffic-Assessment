@@ -184,6 +184,34 @@
   <script>
     window.addEventListener('load', function() {
         setTimeout(() => {
+            fetch('/download_csv', {
+                method: 'GET',
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                const currentDate = new Date();
+                const formattedDate = currentDate.toLocaleDateString('en-US', {
+                        day: 'numeric',     
+                        month: 'long',     
+                        year: 'numeric',    
+                });
+                const dateWithUnderscores = formattedDate.replace(/ /g, '_');
+                const hours = currentDate.getHours();
+                const minutes = currentDate.getMinutes();
+                const seconds = currentDate.getSeconds();
+                const formattedTime = `${hours}_${minutes.toString().padStart(2, '0')}_${seconds.toString().padStart(2, '0')}`;
+                a.download = `vehicle_data_${dateWithUnderscores}_${formattedTime}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+
             fetch('/complete_stop', {
                 method: 'GET',
             })
