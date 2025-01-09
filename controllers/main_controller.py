@@ -172,6 +172,8 @@ def stop_execution():
         if len(data1) > 2:
             return render_template('dashboard2.html', data=rows, data1=data1)
         else:
+            from models.sheets import clear_google_sheets_data
+            clear_google_sheets_data('vehicle-detection', 'Sheet1')
             return render_template('error_page.html', message='No detections were made'), 500
     except Exception as e:
         return render_template('error_page.html', message=str(e) + " From: /final_page"), 50
