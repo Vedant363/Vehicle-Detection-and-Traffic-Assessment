@@ -1,8 +1,8 @@
 from functools import wraps
-from flask import Blueprint, jsonify, render_template, redirect, url_for, flash, session, request, send_file
+from flask import Blueprint, jsonify, render_template, redirect, url_for, flash, session, send_file
 from models.forms import LoginForm, URLForm
 from models.sheets import get_cached_data, initialize_google_sheets, global_sheet
-from models.youtube_stream import extract_video_id, is_valid_youtube_url, global_video_id
+from models.youtube_stream import extract_video_id, global_video_id
 from models.decryption import check_decryption_status
 
 def login_required(f):
@@ -34,7 +34,6 @@ def login():
         if form.validate_on_submit():
             username = form.username.data
             password = form.password.data
-            # Dummy login
             if username == "test" and password == "test123":
                 flash('✅ Login successful!', 'success')
                 session['logged_in'] = True
@@ -183,8 +182,6 @@ def stop_execution():
 def download_csv():
     try:
         from models.sheets import write_to_csv
-        
-        # print("Data1: ", data1)
         global data1
         if data1:
             csv_file_path = write_to_csv(data1)
@@ -192,7 +189,6 @@ def download_csv():
             from models.sheets import clear_google_sheets_data
             clear_google_sheets_data('vehicle-detection', 'Sheet1')
 
-        # Send the file for download
         return send_file(csv_file_path, as_attachment=True, download_name='data.csv'), 200
     except Exception as e:
         return render_template('error_page.html', message=f"Error generating CSV: {str(e)}"), 500
@@ -209,15 +205,14 @@ def call_complete_stop():
     except Exception as e:
         return render_template('error_page.html', message=str(e) + " From: /complete_stop"), 500
     
-@main_bp.route('/hi')
+@main_bp.route('/test')
 @login_required
 def hi():
-    return jsonify(message="hahahehe"), 200
+    return jsonify(message="OK"), 200
 
 @main_bp.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
-    # print("from /logout")
     session.clear()
     flash('☑️ You have been logged out!', 'success')
     return redirect(url_for('main.login'))
