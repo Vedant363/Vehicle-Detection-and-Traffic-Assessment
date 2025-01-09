@@ -8,6 +8,7 @@
 **/__pycache__
 **/.venv
 **/.temp
+**/.vs
 **/.env
 **/.classpath
 **/.dockerignore
