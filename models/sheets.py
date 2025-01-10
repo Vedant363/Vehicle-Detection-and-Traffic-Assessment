@@ -3,6 +3,7 @@ import datetime
 import gspread
 import os
 import csv
+import io
 from flask import current_app
 
 global_sheet = None
@@ -45,19 +46,20 @@ def fetch_data_from_sheets():
     rows = global_sheet.get_all_records()  
     return rows
 
-def write_to_csv(data):
+def write_csv_to_string(data):
     current_time = datetime.datetime.now()
     full_time_string = current_time.strftime("%Y_%m_%d_%H_%M_%S")
-    temp_csv_path = os.path.join(current_app.root_path, 'temp', f'data_{full_time_string}.csv')
     
-    os.makedirs(os.path.dirname(temp_csv_path), exist_ok=True)
+    # Generate CSV content in memory
+    output = io.StringIO()
+    writer = csv.DictWriter(output, fieldnames=data[0].keys())
+    writer.writeheader()
+    writer.writerows(data)
     
-    with open(temp_csv_path, mode='w', newline='', encoding='utf-8') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=data[0].keys())
-        writer.writeheader()
-        writer.writerows(data)
+    csv_content = output.getvalue()
+    output.close()
     
-    return temp_csv_path  
+    return csv_content, f'data_{full_time_string}.csv'
 
 def clear_google_sheets_data(sheet_name, worksheet_name):
     gc = gspread.service_account(filename=SERVICE_ACCOUNT_FILE)
@@ -74,3 +76,22 @@ def get_cached_data():
         cache['data'] = global_sheet.get_all_records(head=1)
         cache['timestamp'] = current_time
     return cache['data']
+
+class DataStorage:
+    # Class-level attribute to store data
+    temp_storage = None
+
+    @classmethod
+    def store_data_temporarily(cls, data):
+        # Store the data temporarily in the class attribute
+        cls.temp_storage = data
+
+    @classmethod
+    def get_stored_data(cls):
+        # Retrieve the temporarily stored data from the class attribute
+        return cls.temp_storage
+    
+    @classmethod
+    def clear_stored_data(cls):
+        # Clear the temporarily stored data
+        cls.temp_storage = None
