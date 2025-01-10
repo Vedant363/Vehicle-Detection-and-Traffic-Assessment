@@ -1,4 +1,14 @@
-# **Pre-requisites to Reproduce the Test Results**  
+# Testing
+![Test Pass](https://img.shields.io/badge/tests-passing-brightgreen)
+
+
+| **Type of Testing**               | **Tool/Framework** | **Description**                                                   |
+|-----------------------------------|--------------------|-------------------------------------------------------------------|
+| **Backend Testing (Python)**      | pytest             | Testing Python code (e.g., Controllers, Models).       |
+| **Frontend Testing (JavaScript)** | Jest               | Testing JavaScript code.  |
+| **Web Browser Testing**           | Selenium           | Automating web browsers to perform end-to-end tests. |
+
+## Backend Testing (Python-Flask)
 
 To successfully reproduce the test results, ensure the following steps are followed:
 
@@ -8,88 +18,100 @@ To successfully reproduce the test results, ensure the following steps are follo
 
 
 
-## **Pre-requisites for the Environment**
+### **Pre-requisites for the Environment**
 
 Ensure the following libraries are available in your environment for testing:
 
-- **pytest** - A testing framework for Python used to write and run tests.
-- **requests** - A library for making HTTP requests, commonly used to test REST APIs.
-- **Flask** - A web framework for building web applications in Python, required for testing Flask applications.
-- **pytest-cov** - A pytest plugin for measuring code coverage.
-- **coverage** - A tool for measuring code coverage in Python.
 
 ```sh
 pip install pytest requests Flask pytest-cov coverage
 ```
 
-## **Testing Result:**
-
-## **For Complete Code:**
+### **To test Complete Code:**
 
 ```sh
 pytest 
 ```
-#### For verbose and shows print() outputs during test execution (Optional)
+#### (Optional) For verbose and shows print() outputs during test execution 
 ```sh
 pytest -vs    
 ```
 
 ![Image13](results/results_complete.png)
 
-## **For Indiviual Modules:**
+### **To test Indiviual Modules:**
 
-## app.py:
 ```sh
 pytest tests/test_app.py     
 ```
-![Image4](results/result_app.png)
 
-## main_controller.py:
 ```sh
  pytest tests/test_controllers/test_main_controller.py
 ```
-![Image5](results/result_main_controller.png)
 
-## video_controller.py:
 ```sh
 pytest tests/test_controllers/test_video_controller.py
 ```
-![Image6](results/result_video_controller.png)
 
-## decryption.py:
 ```sh
 pytest tests/test_models/test_decryption.py
 ```
-![Image7](results/result_decryption.png)
 
-## forms.py:
 ```sh
 pytest tests/test_models/test_forms.py  
 ```
-![Image8](results/result_forms.png)
 
-## sheets.py:
 ```sh
 pytest tests/test_models/test_sheets.py
 ```
-![Image9](results/result_sheets.png)
 
-## state.py:
 ```sh
 pytest tests/test_models/test_state.py
 ```
-![Image10](results/result_state.png)
 
-## tracking.py:
 ```sh
 pytest tests/test_models/test_tracking.py  
 ```
-![Image11](results/result_tracking.png)
 
-## youtube_stream.py:
 ```sh
 pytest tests/test_models/test_youtube_stream.py
 ```
-![Image12](results/result_youtube_stream.png)
 
 ---
+
+## Frontend Testing (Javascript)
+### **Pre-requisites for the Environment**
+### 1. **Set Up Jest for Your Project**
+
+Since your app is primarily a Flask app but includes JavaScript testing:
+1. Navigate to `tests/test_javascript` directory:
+    ```bash
+    cd my_flask_app/tests/test_javascript
+    ```
+
+2. Dependencies are already present in package.json, so install directly:
+    ```bash
+    npm i
+    ```
+3. (Optional) To update all the dependencies and devDependencies to their latest versions:
+    ```bash
+    npx npm-check-updates -u
+    npm install
+    ```
+
+---
+
+### 2. **Run Tests**
+
+Run Jest from the `test_javascript` directory:
+```bash
+npm test
+```
+
+If Jest still complains about module imports, ensure you run the test with the experimental modules flag:
+```bash
+node --experimental-vm-modules ../../node_modules/.bin/jest
+```
+
+![Image13](results/result_javascript.png)
+
