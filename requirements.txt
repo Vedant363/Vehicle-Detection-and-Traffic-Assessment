@@ -22,3 +22,8 @@ python-dotenv
 waitress
 dill
 lap
+pytest
+requests
+flask
+pytest-cov
+coverage
