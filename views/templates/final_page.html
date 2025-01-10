@@ -22,16 +22,24 @@
             fetch('/download_csv', {
                 method: 'GET',
             })
-            .then(response => response.blob())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.blob();
+            })
             .then(blob => {
+                // Create a download link
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
+
+                // Generate dynamic filename
                 const currentDate = new Date();
                 const formattedDate = currentDate.toLocaleDateString('en-US', {
-                        day: 'numeric',     
-                        month: 'long',     
-                        year: 'numeric',    
+                    day: 'numeric',     
+                    month: 'long',     
+                    year: 'numeric',    
                 });
                 const dateWithUnderscores = formattedDate.replace(/ /g, '_');
                 const hours = currentDate.getHours();
@@ -39,12 +47,14 @@
                 const seconds = currentDate.getSeconds();
                 const formattedTime = `${hours}_${minutes.toString().padStart(2, '0')}_${seconds.toString().padStart(2, '0')}`;
                 a.download = `vehicle_data_${dateWithUnderscores}_${formattedTime}.csv`;
+
+                // Trigger the download
                 document.body.appendChild(a);
                 a.click();
                 window.URL.revokeObjectURL(url);
             })
             .catch(error => {
-                console.error('Error:', error);
+                console.error('Error during CSV download:', error);
             });
 
             fetch('/complete_stop', {
