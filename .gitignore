@@ -1,6 +1,12 @@
 __pycache__
+.pytest_cache
+node_modules
+package-lock.json
+package.json
+babel.config.json
 myenv
 venv
+testenv
 temp
 .vs
 .env
