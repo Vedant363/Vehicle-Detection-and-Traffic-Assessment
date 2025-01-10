@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import Blueprint, jsonify, render_template, redirect, url_for, flash, session, send_file
+from flask import Blueprint, Response, jsonify, render_template, redirect, url_for, flash, session, send_file
 from models.forms import LoginForm, URLForm
 from models.sheets import get_cached_data, initialize_google_sheets, global_sheet
 from models.youtube_stream import extract_video_id, global_video_id
@@ -149,7 +149,6 @@ def get_chart_data():
     except Exception as e:
         return render_template('error_page.html', message=str(e) + " From: /get_chart_data"), 500
     
-data1 = None
 
 @main_bp.route('/final_page', methods=['GET','POST'])
 @login_required
@@ -166,8 +165,11 @@ def stop_execution():
             rows = []
         
         from models.sheets import fetch_data_from_sheets
-        global data1
         data1 = fetch_data_from_sheets()
+        from models.sheets import DataStorage
+        storage1 = DataStorage()
+        storage1.store_data_temporarily(data1)
+
 
         if len(data1) > 2:
             return render_template('dashboard2.html', data=rows, data1=data1)
@@ -176,22 +178,28 @@ def stop_execution():
             clear_google_sheets_data('vehicle-detection', 'Sheet1')
             return render_template('error_page.html', message='No detections were made'), 500
     except Exception as e:
-        return render_template('error_page.html', message=str(e) + " From: /final_page"), 50
+        return render_template('error_page.html', message=str(e) + " From: /final_page"), 500
 
 @main_bp.route('/download_csv', methods=['GET'])
 @login_required
 @url_required
 def download_csv():
     try:
-        from models.sheets import write_to_csv
-        global data1
-        if data1:
-            csv_file_path = write_to_csv(data1)
-            data1 = None
+        from models.sheets import write_csv_to_string
+        from models.sheets import DataStorage
+        storage2 = DataStorage()
+        sheets_data = storage2.get_stored_data()
+        if sheets_data:
+            csv_content, filename = write_csv_to_string(sheets_data)
+            storage2.clear_stored_data()
             from models.sheets import clear_google_sheets_data
             clear_google_sheets_data('vehicle-detection', 'Sheet1')
-
-        return send_file(csv_file_path, as_attachment=True, download_name='data.csv'), 200
+        
+        return Response(
+            csv_content,
+            mimetype='text/csv',
+            headers={"Content-Disposition": f"attachment;filename={filename}"}
+        )
     except Exception as e:
         return render_template('error_page.html', message=f"Error generating CSV: {str(e)}"), 500
     
