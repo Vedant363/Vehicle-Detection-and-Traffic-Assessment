@@ -19,39 +19,6 @@ This project is a **real-time vehicle detection and traffic assessment system** 
 
 ### 🚘 **Vehicle Detection**
 - Detects multiple vehicle types in real-time using a **combination of the base YOLO11L model** (for pre-trained classes) and **custom-trained YOLO11L model** (for added custom classes).
-- Base YOLO11L model from [Ultralytics](https://docs.ultralytics.com/models/yolo11/).
-
-| **Model**    | **Size (pixels)** | **mAPval 50-95** | **Speed (CPU ONNX)** | **Speed (T4 TensorRT10)** | **Params (M)** | **FLOPs (B)** |
-|--------------|-------------------|------------------|-----------------------|---------------------------|----------------|---------------|
-| YOLOv11L     | 640               | 53.4             | 238.6 ± 1.4 ms        | 6.2 ± 0.1 ms              | 25.3           | 86.9          |
-
-- **Custom-trained YOLO11L model** supports **80 COCO classes** and **5 additional custom classes** for vehicle detection:
-  - **80: JCB**
-  - **81: Auto**
-  - **82: Rickshaw**
-  - **83: Cart**
-  - **84: Scooter**
-  
-- Results of training for the **Custom-trained YOLO11L model**:
-  
-  ![Results](model_training/results.png)
-  
-- **Achieved Performance Metrics on Testing Data:**
-  - **mAP50-95:** 59.5%
-  - **mAP50:** 66.2%
-  - **mAP75:** 61.3%
-
-- **Class-Wise Performance Metrics on Testing Data:**
-
-| **Class**     | **Precision** | **Recall** | **mAP50** | **mAP50-95** |
-|---------------|---------------|------------|-----------|--------------|
-| JCB           | 0.907         | 0.754      | 0.878     | 0.771        |
-| Auto          | 0.913         | 0.766      | 0.909     | 0.807        |
-| Rickshaw      | 0.862         | 0.728      | 0.868     | 0.811        |
-| Cart          | 0.852         | 0.603      | 0.781     | 0.627        |
-| Scooter       | 0.908         | 0.809      | 0.936     | 0.875        |
-
-
 
 
 ### 📋 **Data Logging**
