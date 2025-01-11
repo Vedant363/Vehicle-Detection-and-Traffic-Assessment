@@ -101,11 +101,17 @@
 
         
     </div>
-
-        <div class="content">
-            <!-- This block will be replaced by specific page content -->
-            {% block content %}{% endblock %}
-        </div>
+        
+      <div class="content">
+        <!-- This block will be replaced by specific page content -->
+        <div class="loading-overlay" id="loadingOverlay">
+          <div class="loading-skeleton"></div>
+          <div class="loading-skeleton"></div>
+          <div class="loading-skeleton"></div>
+      </div>
+    
+        {% block content %}{% endblock %}
+    </div>
     </div>
 
     <footer>
@@ -138,6 +144,13 @@
                 popup.classList.remove('show');
                 overlay.classList.remove('show');
             }, 8000);
+
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            
+            // Set a timeout of 30 seconds (30000 milliseconds) to hide the overlay
+            setTimeout(function() {
+                loadingOverlay.style.display = 'none';
+            }, 40000); // 30 seconds
         };
     </script>
     
