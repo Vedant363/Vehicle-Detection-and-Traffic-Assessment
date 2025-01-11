@@ -11,7 +11,7 @@ cache = {
     'data': None,
     'timestamp': 0
 }
-CACHE_DURATION = 30
+CACHE_DURATION = 50
 SPREADSHEET_ID = os.getenv('SPREADSHEET_ID')
 from models.state import DecryptionStatus
 
