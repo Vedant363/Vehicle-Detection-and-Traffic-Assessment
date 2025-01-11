@@ -49,25 +49,35 @@
         data: {
             labels: Object.keys(classLabels),
             datasets: [{
+              label: 'Category Distribution of Vehicles',
               data: Object.values(classLabels),
               backgroundColor: [
-                '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-                '#FF9F40', '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
-                '#9966FF', '#FF9F40'
-              ]  
+                  '#FF7F00', // Orange
+                  '#FF0000', // Red
+                  '#FF1493', // Deep Pink (extra vibrant)
+                  '#0000FF', // Blue
+                  '#00FF00', // Green
+                  '#FFFF00', // Yellow
+                  '#00FFFF', // Cyan (extra bright)
+                  '#FF6347', // Tomato (extra vibrant)
+                  '#FFD700', // Gold (extra vibrant)
+                  '#FF69B4', // Hot Pink (extra vibrant)
+                  '#00FF7F',  // Spring Green (extra bright)
+                  '#8A2BE2', // Violet
+             ]
             }]
         },
         options: {
             plugins: {
               legend: {
-                display: false,
+                display: true,
                 position: 'top'
               },
               datalabels: {
                 color: '#000',
                 font: {
                     weight: 'bold',
-                    size: 12
+                    size: 14
                 },
                 formatter: function(value, context) {
                     const label = context.chart.data.labels[context.dataIndex];
@@ -87,8 +97,8 @@
             datasets: [{
                 label: 'Number of Vehicles over a period of time',
                 data: Object.values(timeData).slice(-10), // Also slice the corresponding values
-                borderColor: 'rgba(54, 162, 239, 1)',
-                backgroundColor: 'rgba(54, 162, 235, 0.4)',
+                borderColor: 'rgba(5, 59, 252, 1)',
+                backgroundColor: 'rgba(5, 59, 252, 0.3)',
                 borderWidth: 1,
                 fill: true,
             }]
@@ -136,8 +146,8 @@
             datasets: [{
                 label: 'Road Occupancy by all Vehicles (m²)',
                 data: Object.values(roadOccupancy),
-                backgroundColor: 'rgba(255, 99, 132, 1)',
-                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'rgba(255, 13, 37, 0.5)',
+                borderColor: 'rgba(255, 13, 37, 1)',
                 borderWidth: 1
             }]
         },
