@@ -117,26 +117,38 @@ class TrafficAnalyzer:
 def log_to_google_sheets(timestamp, x1, y1, x2, y2, class_name, confidence, track_id):
     from models.sheets import global_sheet, initialize_google_sheets
 
-    global stored_rows
+    global stored_rows, header_inserted
     if 'stored_rows' not in globals():
         stored_rows = []
+
+    if 'header_inserted' not in globals():
+        header_inserted = False  
 
     if global_sheet is None:
         global_sheet = initialize_google_sheets('vehicle-detection')
 
-    if not global_sheet.row_values(1):
-        headers = ['Timestamp', 'X1', 'Y1', 'X2', 'Y2', 'Width', 'Height', 'Class Name', 'Confidence', 'Track ID']
-        global_sheet.insert_row(headers, 1)
+    # Insert the header only once
+    if not header_inserted:
+        try:
+            if not global_sheet.row_values(1):  
+                headers = ['Timestamp', 'X1', 'Y1', 'X2', 'Y2', 'Width', 'Height', 'Class Name', 'Confidence', 'Track ID']
+                global_sheet.insert_row(headers, 1)
+            header_inserted = True
+        except Exception as e:
+            print(f"Error checking/inserting header: {e}")
 
     width = x2 - x1
     height = y2 - y1
-    
+
     row = [timestamp, x1, y1, x2, y2, width, height, class_name, confidence, track_id]
     stored_rows.append(row)
 
-    if len(stored_rows) >= 15:
-        global_sheet.append_rows(stored_rows)
-        stored_rows.clear()
+    if len(stored_rows) >= 25:
+        try:
+            global_sheet.append_rows(stored_rows)
+            stored_rows.clear()  
+        except Exception as e:
+            print(f"Error appending rows: {e}")
 
 logged_tracks = set()
 
@@ -146,8 +158,8 @@ def generate_frames():
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     print(f"Using device: {device}")
 
-    model1 = YOLO('yolo11l.pt')
-    model2 = YOLO('best.pt')
+    model1 = YOLO('yolo11n.pt')
+    model2 = YOLO('best.pt') # Custom YOLO11n model, can be replaced with best_l.pt
 
     from models.youtube_stream import initialize_youtube_stream
     from controllers.main_controller import global_video_id
@@ -160,7 +172,7 @@ def generate_frames():
 
     model1_bias = 0.7
     model2_bias = 0.71
-    frame_skip = 4
+    frame_skip = 5
     frame_count = 0
     road_area = width * height
     traffic_analyzer = TrafficAnalyzer(road_area)
