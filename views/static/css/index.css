@@ -313,18 +313,21 @@ h1 {
 .container2, .content {
     width: 50%;
     padding: 15px;
+    position: relative;
     /* border: 2px solid black; */
 }
 
 .dark .container2, .content {
     width: 50%;
     padding: 15px;
+    position: relative;
     /* border: 2px solid black; */
 }
 
 .light .container2, .content {
     width: 50%;
     padding: 15px;
+    position: relative;
     /* border: 2px solid black; */
 }
 
@@ -1215,4 +1218,88 @@ color: green;
 
 .overlay.show {
     display: block;
+}
+
+
+/* The overlay will cover the content area */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255); 
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+}
+
+.light .loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255); 
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+}
+
+.dark .loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(36, 36, 36); 
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+}
+
+.loading-skeleton {
+    width: 70%; /* Adjust size to fit your content */
+    height: 320px;
+    background: linear-gradient(90deg, rgba(207, 207, 207, 0.8) 25%, rgba(203, 203, 203, 0.9) 50%, rgba(207, 207, 207, 0.5) 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite ease-in-out;
+    border-radius: 4px;
+}
+
+.light .loading-skeleton {
+    width: 70%; /* Adjust size to fit your content */
+    height: 320px;
+    background: linear-gradient(90deg, rgba(207, 207, 207, 0.8) 25%, rgba(203, 203, 203, 0.9) 50%, rgba(207, 207, 207, 0.5) 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite ease-in-out;
+    border-radius: 4px;
+}
+
+.dark .loading-skeleton {
+    width: 70%; /* Adjust size to fit your content */
+    height: 320px;
+    background: linear-gradient(90deg, rgba(88, 88, 88, 0.8) 25%, rgba(95, 95, 95, 0.9) 50%, rgba(93, 93, 93, 0.5) 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite ease-in-out;
+    border-radius: 4px;
+}
+
+/* Skeleton animation for shimmering effect */
+@keyframes loading {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
 }
