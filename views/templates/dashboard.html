@@ -11,5 +11,284 @@
         <canvas id="roadOccupancyChart"></canvas>
     </div>
 </div>
-    {% include "charts.html" %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.27.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@0.1.1"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+<script type="module">
+    let classLabelChart, vehicleTimeChart, roadOccupancyChart;
+
+    // Fetch initial data from Flask
+    const data = {{ data | tojson }};
+    
+    const classLabels = {};
+    let timeData = {};
+    const roadOccupancy = {};
+
+    if (data && data.length > 0) {
+        data.forEach(row => {
+            const timestamp = new Date(row.Timestamp);
+            const classLabel = row['Class Name'];
+            const width = parseFloat(row.Width);
+            const height = parseFloat(row.Height);
+
+            // Class Label Counts
+            classLabels[classLabel] = (classLabels[classLabel] || 0) + 1;
+
+            // Time Data
+            const timeKey = `${String(timestamp.getHours()).padStart(2, '0')}:${String(timestamp.getMinutes()).padStart(2, '0')}`;
+            // console.log(`Timestamp: ${timestamp}, Time Key: ${timeKey}`);
+    
+            timeData[timeKey] = (timeData[timeKey] || 0) + 1;
+            // Sort time data in descending order and keep last 10 entries
+            let sortedEntries = Object.entries(timeData)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10);
+            timeData = Object.fromEntries(sortedEntries);
+            // console.log(`Updated timeData:`, timeData);
+            // console.log('Time Keys:', Object.keys(timeData));
+            // console.log('Time Values:', Object.values(timeData));
+           
+            // Road Occupancy
+            const area = (width * height) / 1000000; // Area in square meters (m²)
+            roadOccupancy[classLabel] = (roadOccupancy[classLabel] || 0) + area;
+        });
+    }
+
+    import { getCurrentLabelColor } from "{{ url_for('static', filename='js/setupThemeToggle.js') }}";
+    let labelColor = getCurrentLabelColor();
+    let vtcbackgroundColor = 'rgba(5, 59, 252, 0.3)';
+    let vtcborderColor = 'rgba(5, 59, 252, 1)';
+    let rocbackgroundColor = 'rgba(255, 13, 37, 0.5)';
+    let rocborderColor = 'rgba(255, 13, 37, 1)';
+    function updateChart() {
+    labelColor = getCurrentLabelColor();
+    
+    // Update global defaults
+    Chart.defaults.color = labelColor;
+    
+    // Update Class Label Chart
+    classLabelChart.options.plugins.title.color = labelColor;
+    classLabelChart.options.plugins.legend.labels.color = labelColor;
+    classLabelChart.options.plugins.datalabels.color = labelColor;
+
+    if(labelColor == 'black'){
+        vtcbackgroundColor = 'rgba(5, 59, 252, 0.3)';
+        vtcborderColor = 'rgba(5, 59, 252, 1)';
+        rocbackgroundColor = 'rgba(255, 13, 37, 0.5)';
+        rocborderColor = 'rgba(255, 13, 37, 1)';
+    } else {
+        vtcbackgroundColor = 'rgba(255, 255, 0, 0.7)';
+        vtcborderColor = 'rgba(255, 255, 0, 1)';
+        rocbackgroundColor = 'rgba(255, 0, 0, 0.8)';
+        rocborderColor = 'rgba(255, 0, 0, 1)';
+    }
+    
+    // Update Vehicle Time Chart
+    vehicleTimeChart.options.scales.x.title.color = labelColor;
+    vehicleTimeChart.options.scales.y.title.color = labelColor;
+    vehicleTimeChart.options.scales.x.ticks.color = labelColor;
+    vehicleTimeChart.options.scales.y.ticks.color = labelColor;
+    vehicleTimeChart.options.plugins.legend.labels.color = labelColor;
+    vehicleTimeChart.data.datasets[0].backgroundColor = vtcbackgroundColor;
+    vehicleTimeChart.data.datasets[0].borderColor = vtcborderColor;
+    
+    // Update Road Occupancy Chart
+    roadOccupancyChart.options.scales.x.title.color = labelColor;
+    roadOccupancyChart.options.scales.y.title.color = labelColor;
+    roadOccupancyChart.options.scales.x.ticks.color = labelColor;
+    roadOccupancyChart.options.scales.y.ticks.color = labelColor;
+    roadOccupancyChart.options.plugins.legend.labels.color = labelColor;
+    roadOccupancyChart.data.datasets[0].backgroundColor = rocbackgroundColor;
+    roadOccupancyChart.data.datasets[0].borderColor = rocborderColor;
+    
+    // Update all charts
+    classLabelChart.update();
+    vehicleTimeChart.update();
+    roadOccupancyChart.update();
+    }
+
+    classLabelChart = new Chart(document.getElementById('classLabelChart'), {
+        type: 'pie',
+        data: {
+            labels: Object.keys(classLabels),
+            datasets: [{
+              label: 'Count',
+              data: Object.values(classLabels),
+              backgroundColor: [
+                  '#FF7F00', // Orange
+                  '#FF0000', // Red
+                  '#FF1493', // Deep Pink (extra vibrant)
+                  '#0000FF', // Blue
+                  '#00FF00', // Green
+                  '#FFFF00', // Yellow
+                  '#00FFFF', // Cyan (extra bright)
+                  '#FF6347', // Tomato (extra vibrant)
+                  '#FFD700', // Gold (extra vibrant)
+                  '#FF69B4', // Hot Pink (extra vibrant)
+                  '#00FF7F',  // Spring Green (extra bright)
+                  '#8A2BE2', // Violet
+             ]
+            }]
+        },
+        options: {
+            plugins: {
+              legend: {
+                display: true,
+                position: 'top',
+                color: labelColor,
+              },
+              datalabels: {
+                color: labelColor,
+                font: {
+                    weight: 'bold',
+                    size: 14
+                },
+                formatter: function(value, context) {
+                    const label = context.chart.data.labels[context.dataIndex];
+                    return `${label}: ${value}`;
+                }
+              },
+              title: {
+                display: true,
+                text: 'Vehicle Distribution',
+                color: labelColor,
+              }
+            }
+        },
+        plugins: [ChartDataLabels]
+      });
+
+        vehicleTimeChart = new Chart(document.getElementById('vehicleTimeChart'), {
+        type: 'line',
+        data: {
+            // Get only the last 10 entries from the sorted data
+            labels: Object.keys(timeData).sort().slice(-10),  
+            datasets: [{
+                label: 'Number of Vehicles over a period of time',
+                data: Object.values(timeData).slice(-10), // Also slice the corresponding values
+                borderColor: vtcborderColor,
+                backgroundColor: vtcbackgroundColor,
+                borderWidth: 1,
+                fill: true,
+            }]
+        },
+        options: {
+            scales: {
+                y: { 
+                    title: { 
+                        display: false, 
+                        text: 'No. of Vehicle',
+                        color: labelColor // Set title text color
+                    },
+                    ticks: {
+                        color: labelColor // Set tick color
+                    }
+                },
+                x: { 
+                    title: { 
+                        display: true, 
+                        text: 'Time',
+                        color: labelColor // Set title text color
+                    },
+                    ticks: {
+                        maxTicksLimit: 10, // Ensures only 10 ticks are shown
+                        color: labelColor // Set tick color
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: labelColor // Set legend text color
+                    }
+                }
+            },
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+
+    roadOccupancyChart = new Chart(document.getElementById('roadOccupancyChart'), {
+        type: 'bar',
+        data: {
+            labels: Object.keys(roadOccupancy),
+            datasets: [{
+                label: 'Road Occupancy by all Vehicles (m²)',
+                data: Object.values(roadOccupancy),
+                backgroundColor: rocbackgroundColor,
+                borderColor: rocborderColor,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: { 
+                    beginAtZero: true, 
+                    title: { 
+                        display: true, 
+                        text: 'Area in m²',
+                        color: labelColor // Set title text color
+                    },
+                    ticks: {
+                        color: labelColor // Set tick color
+                    }
+                },
+                x: { 
+                    title: { 
+                        display: true, 
+                        text: 'Vehicles',
+                        color: labelColor // Set title text color
+                    },
+                    ticks: {
+                        color: labelColor // Set tick color
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: labelColor // Set legend text color
+                    }
+                }
+            }
+        }
+    });
+
+    // Periodic updates
+    setInterval(() => {
+        fetch('/get_chart_data')
+            .then(response => response.json())
+            .then(updatedData => {
+                // console.log(updatedData);
+                updateCharts(updatedData);
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }, 5000);
+
+    function updateCharts(data) {
+        if (data) {
+            classLabelChart.data.datasets[0].data = data.classLabels.values;
+            classLabelChart.data.labels = data.classLabels.keys;
+            classLabelChart.update();
+
+            vehicleTimeChart.data.datasets[0].data = data.timeData.values;
+            vehicleTimeChart.data.labels = data.timeData.keys;
+            vehicleTimeChart.update();
+            
+            roadOccupancyChart.data.datasets[0].data = data.roadOccupancy.values;
+            roadOccupancyChart.data.labels = data.roadOccupancy.keys;
+            roadOccupancyChart.update();
+        }
+    }
+// vehicleTimeChart.data.labels.push(vehicleTimeChart.data.labels.shift());
+// updateChart();
+    
+    // Update chart when theme changes
+document.querySelector('.togglebutton').addEventListener('click', function() {
+    setTimeout(updateChart, 100); 
+});
+</script>
 {% endblock %}
