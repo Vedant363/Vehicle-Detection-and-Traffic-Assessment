@@ -3,9 +3,9 @@
 This project is a **real-time vehicle detection and traffic assessment system** built on a self-trained **YOLO11L model**. The system integrates advanced features like **data logging**, **visualization**, and **traffic analysis** to provide actionable insights into traffic conditions.
 
 ![License](https://img.shields.io/github/license/Vedant363/Vehicle-Detection-and-Traffic-Assessment?color=gold)
-![Last Commit](https://img.shields.io/github/last-commit/Vedant363/Vehicle-Detection-and-Traffic-Assessment?color=orange)
 ![Build Status](https://img.shields.io/badge/build-passing-neongreen)
-![Visitors](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https://github.com/Vedant363/Vehicle-Detection-and-Traffic-Assessment&count_bg=red)
+<!-- ![Last Commit](https://img.shields.io/github/last-commit/Vedant363/Vehicle-Detection-and-Traffic-Assessment?color=orange) -->
+<!-- ![Visitors](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https://github.com/Vedant363/Vehicle-Detection-and-Traffic-Assessment&count_bg=red) -->
 
 
 
@@ -16,6 +16,7 @@ This project is a **real-time vehicle detection and traffic assessment system** 
 
 
 ## ✨ **Features**
+![AD](views/static/images/arch_diagram.png)
 
 ### 🚘 **Vehicle Detection**
 - Detects multiple vehicle types in real-time using a **combination of the base YOLO11L model** (for pre-trained classes) and **custom-trained YOLO11L model** (for added custom classes).
@@ -107,11 +108,6 @@ Real-time calculations based on detection data:
 | 21:49:05 1/1/2025      | 62.71186829   | 150.5038757  | 96.41931152   | 185.9692078  | 33.70744324   | 35.46533203   | auto           | 0.8151150942   | 3            |
 | 21:49:05 1/1/2025      | 157.4563141   | 140.8128662  | 195.0846405   | 168.6981506  | 37.62832642   | 27.88528442   | car            | 0.7732740045   | 4            |
 | 21:49:05 1/1/2025      | 287.2844238   | 136.8283691  | 320.9523926   | 169.0031128  | 33.66796875   | 32.17474365   | car            | 0.7720789313   | 5            |
-
-### **Visualization Charts**
-- **Bar Chart**: Highlights vehicle classes with the most road occupancy based on their dimensions.
-  
-![Bar Chart](views/static/images/bar.png)
 
 
 ## 🚀 **Future Enhancements**
