@@ -1,5 +1,17 @@
 // themeToggle.js
 
+export function getCurrentLabelColor() {
+    let currentLabelColor = ''; // Default to black for light mode
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        currentLabelColor = savedTheme === 'light' ? 'black' : 'white';
+    }
+    else{
+        currentLabelColor = 'black';
+    }
+    return currentLabelColor;
+}
+
 export function setupThemeToggle() {
     const toggleButton = document.querySelector('.togglebutton');
     const tooltipText = document.querySelector('.tooltip-text2');
