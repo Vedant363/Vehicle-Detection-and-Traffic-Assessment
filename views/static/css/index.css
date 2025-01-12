@@ -457,7 +457,7 @@ h1 {
 .dark .chart-item1 {
     width: 100%; 
     max-width: 400px; 
-    background: #6c6c6c;
+    background: #171261;
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 0 8px rgba(176, 176, 176, 0.808);
@@ -510,7 +510,7 @@ h1 {
 .dark .chart-item {
     width: 100%; 
     max-width: 500px; 
-    background: #6c6c6c;
+    background: #171261;
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 0 8px rgba(146, 146, 146, 0.912);
