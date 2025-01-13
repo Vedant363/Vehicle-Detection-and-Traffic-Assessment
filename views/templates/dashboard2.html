@@ -207,16 +207,16 @@
         }
     });
 
-    // Periodic updates
-    setInterval(() => {
-        fetch('/get_chart_data')
-            .then(response => response.json())
-            .then(updatedData => {
-                // console.log(updatedData);
-                updateCharts(updatedData);
-            })
-            .catch(error => console.error('Error fetching data:', error));
-    }, 5000);
+    //updates
+    window.onload = function() {
+    fetch('/get_chart_data')
+        .then(response => response.json())
+        .then(updatedData => {
+            // console.log(updatedData);
+            updateCharts(updatedData);
+        })
+        .catch(error => console.error('Error fetching data:', error));
+    };
 
     function updateCharts(data) {
         if (data) {
