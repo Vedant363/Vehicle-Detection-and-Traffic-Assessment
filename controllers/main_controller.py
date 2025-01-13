@@ -119,7 +119,7 @@ def traffic_data():
     except Exception as e:
         return render_template('error_page.html', message=str(e) + " From: /traffic_data"), 500
 
-@main_bp.route('/get_chart_data')
+@main_bp.route('/get_chart_data', methods=['GET','POST'])
 @login_required
 @url_required
 def get_chart_data():
