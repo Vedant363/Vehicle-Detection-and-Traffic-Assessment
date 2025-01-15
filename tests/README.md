@@ -4,7 +4,7 @@
 
 | **Type of Testing**               | **Tool/Framework** | **Description**                                                   |
 |-----------------------------------|--------------------|-------------------------------------------------------------------|
-| **Backend Testing (Python)**      | pytest             | Testing Python code (e.g., Controllers, Models).       |
+| **Backend Testing (Python)**      | pytest, coverage             | Testing Python code (e.g., Controllers, Models).       |
 | **Frontend Testing (JavaScript)** | Jest               | Testing JavaScript code.  |
 | **Web Browser Testing**           | Selenium           | Automating web browsers to perform end-to-end tests. |
 
@@ -77,6 +77,26 @@ pytest tests/test_models/test_tracking.py
 pytest tests/test_models/test_youtube_stream.py
 ```
 
+### For Coverage Testing
+```sh
+coverage run -m pytest
+```
+```sh
+coverage report
+```
+| Name                                                   | Stmts | Miss | Cover |
+|--------------------------------------------------------|-------|------|-------|
+| tests\test_app.py                                      | 25    | 0    | 100%  |
+| tests\test_controllers\test_main_controller.py         | 138   | 0    | 100%  |
+| tests\test_controllers\test_video_controller.py        | 47    | 5    | 89%   |
+| tests\test_models\test_decryption.py                   | 48    | 0    | 100%  |
+| tests\test_models\test_forms.py                        | 23    | 0    | 100%  |
+| tests\test_models\test_sheets.py                       | 87    | 1    | 99%   |
+| tests\test_models\test_state.py                        | 23    | 0    | 100%  |
+| tests\test_models\test_tracking.py                     | 83    | 0    | 100%  |
+| tests\test_models\test_youtube_stream.py               | 25    | 0    | 100%  |
+| **TOTAL**                                              | **499** | **6** | **99%** |
+
 ---
 
 ## Frontend Testing (Javascript)
@@ -115,3 +135,24 @@ node --experimental-vm-modules ../../node_modules/.bin/jest
 
 ![Image13](results/result_javascript.png)
 
+## Browser Testing (Selenium)
+
+### **Pre-requisites for the Environment**
+
+1. Download the ChromeDriver version that is compatible with your browser from the [ChromeDriver website](https://googlechromelabs.github.io/chrome-for-testing/).
+   
+2. Set up the path where you are running the application. For example, `https://localhost:5000`.
+
+3. Run the main `app.py` file first.
+
+4. Then, run the Selenium test file.
+
+5. (Optional) Generate a report
+```bash
+pip install pytest pytest-html
+```
+```bash
+pytest your_test_file.py --html=report.html
+```
+
+![Image14](results/result_selenium.jpg)
