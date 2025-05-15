@@ -78,7 +78,8 @@ def submit():
             if re.match(youtube_regex, input_url):
                 video_id = extract_video_id(input_url)
                 if video_id:
-                    global global_video_id, global_stream_url
+                    global global_video_id
+                    global global_stream_url
                     global_video_id = video_id
                     global_stream_url = None
                     return redirect(url_for('main.dashboard'))
@@ -87,7 +88,7 @@ def submit():
                     return redirect(url_for('main.home'))
 
             elif re.match(ip_stream_regex, input_url):
-                global global_stream_url, global_video_id
+                global_stream_url, global_video_id
                 global_stream_url = input_url
                 global_video_id = None
                 return redirect(url_for('main.dashboard'))
