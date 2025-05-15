@@ -161,15 +161,17 @@ def generate_frames():
     model1 = YOLO('yolo11n.pt')
     model2 = YOLO('best.pt') # Custom YOLO11n model, can be replaced with best_l.pt
 
-    # --- For IP Camera based Traffic Detection ---
-    # from models.ip_camera_stream import initialize_ip_camera_stream
-    # from controllers.main_controller import global_stream_url
-    # cap = initialize_ip_camera_stream(global_stream_url)
+    from controllers.main_controller import global_video_id, global_stream_url
 
+    cap = None
     # --- For Youtube Stream based Traffic Detection ---
-    from models.youtube_stream import initialize_youtube_stream
-    from controllers.main_controller import global_video_id
-    cap = cv2.VideoCapture(initialize_youtube_stream(global_video_id))
+    if global_video_id:
+        from models.youtube_stream import initialize_youtube_stream
+        cap = cv2.VideoCapture(initialize_youtube_stream(global_video_id))
+    # --- For IP Camera based Traffic Detection ---
+    elif global_stream_url:
+        from models.ip_camera_stream import initialize_ip_camera_stream
+        cap = initialize_ip_camera_stream(global_stream_url)
 
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
