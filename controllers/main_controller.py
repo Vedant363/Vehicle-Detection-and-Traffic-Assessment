@@ -4,6 +4,7 @@ from models.forms import LoginForm, URLForm
 from models.sheets import get_cached_data, initialize_google_sheets, global_sheet
 from models.youtube_stream import extract_video_id, global_video_id
 from models.decryption import check_decryption_status
+import re
 
 def login_required(f):
     @wraps(f)
@@ -69,19 +70,36 @@ def submit():
     try:
         form = URLForm()
         if form.validate_on_submit():
-            youtube_url = form.youtube_url.data
-            video_id = extract_video_id(youtube_url)
-            if video_id:
-                global global_video_id
-                global_video_id = video_id
+            input_url = form.youtube_url.data.strip()
+
+            youtube_regex = r'^https?://(www\.)?(youtube\.com/(watch\?v=|live/)|youtu\.be/)[\w-]{11}(&t=\d+s)?$'
+            ip_stream_regex = r'^(http:\/\/|rtsp:\/\/).+'
+
+            if re.match(youtube_regex, input_url):
+                video_id = extract_video_id(input_url)
+                if video_id:
+                    global global_video_id
+                    global_video_id = video_id
+                    return redirect(url_for('main.dashboard'))
+                else:
+                    flash("❌ Invalid YouTube URL", "danger")
+                    return redirect(url_for('main.home'))
+
+            elif re.match(ip_stream_regex, input_url):
+                global global_stream_url
+                global_stream_url = input_url
                 return redirect(url_for('main.dashboard'))
+
             else:
-                flash("❌ Invalid YouTube URL", "danger")
+                # This should not occur if validation works correctly
+                flash("❌ Unsupported Webcam URL format", "danger")
                 return redirect(url_for('main.home'))
+
         else:
-            flash("❌ Invalid YouTube URL!!", "danger")
-            flash("💡 Use default URL or Enter valid URL", "suggestion")
+            flash("❌ Invalid URL!", "danger")
+            flash("💡 Use the default or enter a valid YouTube or IP stream URL", "suggestion")
             return redirect(url_for('main.home'))
+
     except Exception as e:
         return render_template('error_page.html', message=str(e) + " From: /submit"), 500
 

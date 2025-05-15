@@ -162,10 +162,9 @@ def generate_frames():
     model2 = YOLO('best.pt') # Custom YOLO11n model, can be replaced with best_l.pt
 
     # --- For IP Camera based Traffic Detection ---
-    # ip_camera_url = 'rtsp://your_ip_camera_address/stream_path' 
-
     # from models.ip_camera_stream import initialize_ip_camera_stream
-    # cap = initialize_ip_camera_stream(ip_camera_url)
+    # from controllers.main_controller import global_stream_url
+    # cap = initialize_ip_camera_stream(global_stream_url)
 
     # --- For Youtube Stream based Traffic Detection ---
     from models.youtube_stream import initialize_youtube_stream
