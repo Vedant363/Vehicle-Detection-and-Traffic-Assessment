@@ -9,7 +9,7 @@ import time
 def test_flask_app():
     # Start the Flask app
     from selenium.webdriver.chrome.service import Service
-    service = Service("") # Your path to chrome driver
+    service = Service('D:\\Google Downloads\\chromedriver-win64\\chromedriver-win64\\chromedriver.exe') # Your path to chrome driver
     driver = webdriver.Chrome(service=service)
 
     try:

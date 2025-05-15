@@ -13,14 +13,36 @@ def initialize_youtube_stream(video_id):
 def is_valid_youtube_url(youtube_url):
     return bool(re.match(YOUTUBE_URL_REGEX, youtube_url))
 
+# def get_youtube_stream_url(video_url):
+#     ydl_opts = {
+#         # 'format': 'best',
+#         'noplaylist': True
+#     }
+#     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+#         info = ydl.extract_info(video_url, download=False)
+#         return info['url']
+
 def get_youtube_stream_url(video_url):
     ydl_opts = {
         'format': 'best',
         'noplaylist': True,
+        'quiet': True,
     }
+
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(video_url, download=False)
-        return info['url']
+
+        # First, try direct 'url'
+        if 'url' in info:
+            return info['url']
+
+        # Fallback: Look into formats
+        if 'formats' in info:
+            for f in info['formats']:
+                if f.get('vcodec') != 'none' and 'url' in f:
+                    return f['url']
+
+        raise Exception("No downloadable stream URL found")
 
 def extract_video_id(url):
     if 'v=' in url:
