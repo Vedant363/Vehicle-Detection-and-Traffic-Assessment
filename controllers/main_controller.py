@@ -103,7 +103,6 @@ def submit():
     except Exception as e:
         return render_template('error_page.html', message=str(e) + " From: /submit"), 500
     
-
 @main_bp.route('/index')
 @login_required
 @url_required
