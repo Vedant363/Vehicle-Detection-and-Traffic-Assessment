@@ -11,7 +11,7 @@ This project is a **real-time vehicle detection and traffic assessment system** 
 
 
 ## 🖼️ **Preview**
-![Photo 1](views/static/images/photo1.png)
+![Photo 1](views/static/images/projectrun.gif)
 
 
 
