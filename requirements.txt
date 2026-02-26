@@ -4,7 +4,6 @@ WTForms
 opencv-python
 numpy
 ultralytics
-shapely
 openpyxl
 pytube
 yt-dlp

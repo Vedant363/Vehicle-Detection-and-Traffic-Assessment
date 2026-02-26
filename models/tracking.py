@@ -3,6 +3,8 @@ import numpy as np
 import torch
 from ultralytics import YOLO
 import signal
+from collections import deque
+from datetime import datetime
 
 # For analyzing traffic
 traffic_analysis_data = {}
@@ -21,11 +23,17 @@ def complete_stop():
     signal.raise_signal(signal.SIGINT)
 
 def box_iou(box1, box2):
-    from shapely.geometry import box as shapely_box
-    poly1 = shapely_box(box1[0], box1[1], box1[2], box1[3])
-    poly2 = shapely_box(box2[0], box2[1], box2[2], box2[3])
-    iou = poly1.intersection(poly2).area / poly1.union(poly2).area
-    return iou
+    x1 = max(box1[0], box2[0])
+    y1 = max(box1[1], box2[1])
+    x2 = min(box1[2], box2[2])
+    y2 = min(box1[3], box2[3])
+    intersection = max(0.0, x2 - x1) * max(0.0, y2 - y1)
+    if intersection == 0.0:
+        return 0.0
+    area1 = (box1[2] - box1[0]) * (box1[3] - box1[1])
+    area2 = (box2[2] - box2[0]) * (box2[3] - box2[1])
+    union = area1 + area2 - intersection
+    return intersection / union if union > 0.0 else 0.0
 
 class VehicleTracker:
     def __init__(self, max_age=30):
@@ -33,9 +41,6 @@ class VehicleTracker:
         self.max_age = max_age
 
     def update(self, detections):
-        from collections import deque
-        import numpy as np
-
         current_ids = set()
         for detection in detections:
             track_id = detection[6]
@@ -56,7 +61,6 @@ class VehicleTracker:
                     del self.vehicles[track_id]
 
     def get_vehicle_speed(self, track_id, pixels_per_meter):
-        import numpy as np
         if track_id in self.vehicles and len(self.vehicles[track_id]['positions']) > 1:
             start = self.vehicles[track_id]['positions'][0]
             end = self.vehicles[track_id]['positions'][-1]
@@ -75,8 +79,6 @@ class TrafficAnalyzer:
         self.vehicle_tracker = VehicleTracker()
 
     def analyze_traffic(self, detections):
-        import numpy as np
-
         self.vehicle_tracker.update(detections)
         vehicle_count = len(self.vehicle_tracker.vehicles)
         heavy_vehicle_count = sum(1 for v in self.vehicle_tracker.vehicles.values() 
@@ -222,7 +224,6 @@ def generate_frames():
         if not get_show_video():
             frame = np.zeros((height, width, 3), dtype=np.uint8)
 
-        from datetime import datetime
         timestamp = datetime.now().strftime("%H:%M:%S %d,%m,%Y")
 
         for box in filtered_boxes:
