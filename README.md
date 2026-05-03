@@ -10,13 +10,11 @@
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)
 ![Docker](https://img.shields.io/badge/Docker-supported-2496ED?logo=docker)
 
----
 
 ## 🖼️ Preview
 
 ![Project Demo](views/static/images/projectrun.gif)
 
----
 
 ## 📌 Table of Contents
 
@@ -33,7 +31,6 @@
 - [Future Enhancements](#-future-enhancements)
 - [License](#-license)
 
----
 
 ## ✨ Features
 
@@ -67,13 +64,11 @@ Live traffic metrics calculated from detection data:
 - **Road Clearance Time** — Predicted time to clear the road
 - **Traffic Light Suggestions** — Optimal signal timing recommendations
 
----
 
 ## 🏗️ Architecture
 
 ![Architecture Diagram](views/static/images/arch_diagram.png)
 
----
 
 ## 🛠️ Tech Stack
 
@@ -88,7 +83,6 @@ Live traffic metrics calculated from detection data:
 | Containerization | Docker |
 | Security | GnuPG (GPG) encryption |
 
----
 
 ## 🚀 Getting Started
 
@@ -104,7 +98,6 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
----
 
 ### Method 1 — Run Locally (`app.py`)
 
@@ -116,7 +109,6 @@ python app.py
 
 The app will prompt you for the **GPG decryption password** in the terminal. After entering it, the application starts on `localhost`.
 
----
 
 ### Method 2 — Run via NGROK (`app_tunnel.py`)
 
@@ -134,7 +126,6 @@ Best for **Google Colab or Kaggle** environments where you need a public URL.
    ```
 4. Enter the GPG decryption password when prompted. NGROK will generate a public URL to access the app.
 
----
 
 ### Method 3 — Run with Docker (`app_container.py`)
 
@@ -154,7 +145,6 @@ docker build -t vehicle-detection .
 docker run -p 8087:8087 vehicle-detection
 ```
 
----
 
 ## 🔐 Credentials Setup
 
@@ -189,7 +179,6 @@ else:
 
 Store the output `.gpg` file in the project root. The app will decrypt it at runtime when you enter the password.
 
----
 
 ## 📤 Example Output
 
@@ -203,7 +192,6 @@ Store the output `.gpg` file in the project root. The app will decrypt it at run
 | 21:49:05 1/1/2025 | 157.46 | 140.81 | 195.08 | 168.70 | 37.63 | 27.89 | car | 0.773 | 4 |
 | 21:49:05 1/1/2025 | 287.28 | 136.83 | 320.95 | 169.00 | 33.67 | 32.17 | car | 0.772 | 5 |
 
----
 
 ## 🔮 Future Enhancements
 
@@ -211,13 +199,11 @@ Store the output `.gpg` file in the project root. The app will decrypt it at run
 - **Custom Class Expansion** — Train on additional vehicle classes for broader detection coverage
 - **Traffic Management API** — Export insights to external traffic management systems
 
----
 
 ## 🤝 Contributing
 
 Contributions are welcome! Feel free to open issues for bugs, feature requests, or new vehicle class ideas. Pull requests are appreciated.
 
----
 
 ## 📝 License
 
