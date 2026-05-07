@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 from ultralytics import YOLO
-from shapely.geometry import box as shapely_box
 from collections import deque
 
 # Load the model
